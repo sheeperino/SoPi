@@ -182,8 +182,10 @@ int main(int argc, char **argv) {
 
   int status = 0;
   srand(time(0));
+  printf("Loading...\n");
   unsigned char *data = stbi_load(img_path, &x, &y, &n, CHANNELS);
-  printf("x * y * n = %d\n", x * y * CHANNELS);
+  printf("Loaded.\n");
+  // printf("x * y * n = %d\n", x * y * CHANNELS);
   char *mask = malloc(x * y);
   if (data == NULL) {
     printf("couldn't read image\n");
@@ -218,17 +220,22 @@ int main(int argc, char **argv) {
   //   ((uint32_t *)data)[i] = (mask[i] ? 0xFFFFFFFF : 0xFF000000);
   // }
 
-  if (resize_factor != 1.0)
+  printf("Resizing...\n");
+  if (resize_factor != 1.0) {
     data = stbir_resize_uint8_linear(
         data, x, y, x * CHANNELS, NULL, (int)(x * resize_factor),
         (int)(y * resize_factor), (int)(x * resize_factor) * CHANNELS,
         STBIR_ABGR);
+  }
+  printf("Resized.\n");
 
+  printf("Writing...\n");
   if (!stbi_write_png(out_path, (int)(x * resize_factor), (int)(y * resize_factor),
                       CHANNELS, data, (int)(x * resize_factor) * CHANNELS)) {
     printf("couldn't write image\n");
     status = 1;
   }
+  printf("Wrote.\n");
 
 defer:
   free(mask);
