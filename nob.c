@@ -11,7 +11,7 @@ Procs procs = {0};
 int build_object(const char *obj, const char *file, const char *impl) {
   if (needs_rebuild1(obj, file)) {
   	cmd_append(&cmd, "cc", "-Wextra", "-Wall", "-std=c99");
-  	cmd_append(&cmd, "-O3", "-flto=auto");
+  	cmd_append(&cmd, "-O3", "-march=native");
   	cmd_append(&cmd, "-x", "c", "-c", file, impl);
   	cmd_append(&cmd, "-o", obj);
     return cmd_run(&cmd, .async = &procs);
