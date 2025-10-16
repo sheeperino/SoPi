@@ -21,9 +21,6 @@
 #define IMG_DIR  "img/"
 #define OUT_DIR  "out/"
 #define OUTNAME  "sorted_"
-// #define FILENAME "coros.jpg"
-// #define IMG      IMG_DIR FILENAME
-#define OUT      OUT_DIR OUTNAME FILENAME
 
 #define STBI_MAX_DIMENSIONS (1 << 27)
 #define CHANNELS 4
@@ -131,6 +128,16 @@ int sort_pixels(const void *p1, const void *p2) {
   // return *(uint32_t *)p2 - *(uint32_t *)p1;
 }
 
+inline bool is_dir_sep(char c) { return c == '/' || c == '\\'; }
+
+// we don't care about invalid paths since they'll already be checked
+const char *basename(const char *s) {
+  if (!s || !*s) return NULL;
+  size_t i = strlen(s) - 1;
+  for (; i != 0 && !is_dir_sep(s[i]); --i);
+  return s + i + (i == 0 ? 0 : 1);
+}
+
 void usage(FILE *stream) {
   fprintf(stream, "Usage: [OPTIONS] [FILE]\n");
   fprintf(stream, "Options:\n");
@@ -171,8 +178,16 @@ int main(int argc, char **argv) {
   MIN = *flag_min;
   MAX = *flag_max;
   FILENAME = *rest_argv;
-  const char *img_path = nob_temp_sprintf(IMG_DIR "%s", FILENAME);
-  const char *out_path = nob_temp_sprintf(OUT_DIR OUTNAME "%s", FILENAME);
+
+  const char *img_path;
+  if (!nob_file_exists(img_path = FILENAME)) {
+    if (is_dir_sep(FILENAME[0]) || !nob_file_exists(img_path = nob_temp_sprintf(IMG_DIR "%s", FILENAME))) {
+      fprintf(stderr, "Input path is not valid\n");
+      return 1;
+    }
+  }
+
+  const char *out_path = nob_temp_sprintf(OUT_DIR OUTNAME "%s", basename(FILENAME));
 
   printf("stbi_write_tga_with_rle = %d\n", stbi_write_tga_with_rle);
   printf("resize factor = %f\n", resize_factor);
@@ -185,7 +200,6 @@ int main(int argc, char **argv) {
   printf("Loading...\n");
   unsigned char *data = stbi_load(img_path, &x, &y, &n, CHANNELS);
   printf("Loaded.\n");
-  // printf("x * y * n = %d\n", x * y * CHANNELS);
   char *mask = malloc(x * y);
   if (data == NULL) {
     printf("couldn't read image\n");
