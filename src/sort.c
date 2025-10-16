@@ -182,7 +182,7 @@ int main(int argc, char **argv) {
   const char *img_path;
   if (!nob_file_exists(img_path = FILENAME)) {
     if (is_dir_sep(FILENAME[0]) || !nob_file_exists(img_path = nob_temp_sprintf(IMG_DIR "%s", FILENAME))) {
-      fprintf(stderr, "Input path is not valid\n");
+      fprintf(stderr, "ERROR: Input path is not valid\n");
       return 1;
     }
   }
@@ -202,7 +202,7 @@ int main(int argc, char **argv) {
   printf("Loaded.\n");
   char *mask = malloc(x * y);
   if (data == NULL) {
-    printf("couldn't read image\n");
+    fprintf(stderr, "ERROR: Couldn't read image\n");
     status = 1;
     goto defer;
   }
@@ -246,7 +246,7 @@ int main(int argc, char **argv) {
   printf("Writing...\n");
   if (!stbi_write_png(out_path, (int)(x * resize_factor), (int)(y * resize_factor),
                       CHANNELS, data, (int)(x * resize_factor) * CHANNELS)) {
-    printf("couldn't write image\n");
+    fprintf(stderr, "ERROR: Couldn't write image\n");
     status = 1;
   }
   printf("Wrote.\n");
