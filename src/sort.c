@@ -149,6 +149,7 @@ int main(int argc, char **argv) {
   size_t *flag_max = flag_size("M", 250, "Maximum threshold");
   float *flag_resize_factor = flag_float("r", 1.0, "Resize factor");
   bool *help = flag_bool("help", false, "Print this message");
+  char **flag_out_path = flag_str("o", NULL, "Custom output path\n        Default: ./out/sorted_<FILENAME>");
 
   if (!flag_parse(argc, argv)) {
     usage(stderr);
@@ -187,7 +188,9 @@ int main(int argc, char **argv) {
     }
   }
 
-  const char *out_path = nob_temp_sprintf(OUT_DIR OUTNAME "%s", basename(FILENAME));
+  const char *out_path;
+  if (*flag_out_path) out_path = *flag_out_path;
+  else out_path = nob_temp_sprintf(OUT_DIR OUTNAME "%s", basename(FILENAME));
 
   printf("stbi_write_tga_with_rle = %d\n", stbi_write_tga_with_rle);
   printf("resize factor = %f\n", resize_factor);
