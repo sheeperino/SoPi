@@ -124,6 +124,7 @@ void image_mask(unsigned char *img, char *mask, int f(Color)) {
 int sort_pixels(const void *p1, const void *p2) {
   Color c1 = abgr2col(*(uint32_t *)p1);
   Color c2 = abgr2col(*(uint32_t *)p2);
+  // swap these for right to left sorting
   return c2.g - c1.g;
   // return *(uint32_t *)p2 - *(uint32_t *)p1;
 }
@@ -148,8 +149,9 @@ int main(int argc, char **argv) {
   size_t *flag_min = flag_size("m", 150, "Minimum threshold");
   size_t *flag_max = flag_size("M", 250, "Maximum threshold");
   float *flag_resize_factor = flag_float("r", 1.0, "Resize factor");
-  bool *help = flag_bool("help", false, "Print this message");
+  bool *flag_gay = flag_bool("gay", false, "Skips pixel sorting, giving it a rainbow stripes effect");
   char **flag_out_path = flag_str("o", NULL, "Custom output path\n        Default: ./out/sorted_<FILENAME>");
+  bool *help = flag_bool("help", false, "Print this message");
 
   if (!flag_parse(argc, argv)) {
     usage(stderr);
@@ -176,6 +178,7 @@ int main(int argc, char **argv) {
   }
 
   float resize_factor = *flag_resize_factor;
+  bool gay = *flag_gay;
   MIN = *flag_min;
   MAX = *flag_max;
   FILENAME = *rest_argv;
@@ -215,26 +218,27 @@ int main(int argc, char **argv) {
   // intervals (strip of white mask pixels)
   // should be filled with a random color which is reset when
   // encountering black or when going to a new row
-  int new_strip = 1;
+  bool new_strip = true;
   uint32_t strip_col;
   int start = 0;
   for (int i = 0; i < x * y; ++i) {
     if (mask[i] == 0 || i / x != start / x) {
-      if (!new_strip)
+      if (!new_strip && !gay)
         qsort(data + start * CHANNELS, (i - start), sizeof(data[0]) * CHANNELS, sort_pixels);
-      new_strip = 1;
+      new_strip = true;
     }
     if (mask[i] == 1 && new_strip) {
       Color r = rand_color();
       strip_col = col2abgr(r);
-      new_strip = 0;
+      new_strip = false;
       start = i;
     }
+    if (gay && mask[i]) ((uint32_t *)data)[i] = strip_col;
   }
   (void)strip_col;
 
   // for (int i = 0; i < x * y; ++i) {
-  //   ((uint32_t *)data)[i] = (mask[i] ? 0xFFFFFFFF : 0xFF000000);
+  // ((uint32_t *)data)[i] = (mask[i] ? 0xFFFFFFFF : 0xFF000000);
   // }
 
   printf("Resizing...\n");
