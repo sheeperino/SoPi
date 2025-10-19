@@ -1,2 +1,2 @@
 - non hardcoded "sort by" options (both for generating the mask and for sorting the pixels)
-- allow for sorting in other directions than left to right
+- gui

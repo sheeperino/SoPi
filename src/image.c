@@ -10,7 +10,6 @@
 static uint8_t *orig_data;
 uint8_t *data;
 bool *mask;
-size_t MIN, MAX;
 int x, y, n;
 
 void image_mask(uint8_t *img, bool *mask, bool f(Color)) {
@@ -39,7 +38,10 @@ void image_sort(bool gay, bool mask_only) {
     }
   }
   if (gay || !mask_only) {
-    sort_intervals_vert(data, mask, gay);
+    if (sort_direction == UP || sort_direction == DOWN)
+      sort_intervals_vert(data, mask, gay);
+    else
+      sort_intervals_horiz(data, mask, gay);
   }
 }
 

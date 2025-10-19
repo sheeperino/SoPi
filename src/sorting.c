@@ -4,6 +4,9 @@
 
 #define MASK_THRESHOLD(val) (val >= MIN && val <= MAX ? 1 : 0)
 
+size_t MIN, MAX;
+SortDirection sort_direction;
+
 bool by_value(Color c) {
   Hsv hsv = col2hsv(c);
   return MASK_THRESHOLD(hsv.v);
@@ -15,8 +18,11 @@ bool by_blue(Color c) { return MASK_THRESHOLD(c.b); }
 int sort_pixels(const void *p1, const void *p2) {
   Color c1 = abgr2col(*(uint32_t *)p1);
   Color c2 = abgr2col(*(uint32_t *)p2);
-  // swap these for right to left sorting
-  return c2.g - c1.g;
+  // TODO: can choose between different values to sort
+  if (sort_direction == LEFT || sort_direction == DOWN)
+    return c1.g - c2.g;
+  else
+    return c2.g - c1.g;
   // return *(uint32_t *)p2 - *(uint32_t *)p1;
 }
 

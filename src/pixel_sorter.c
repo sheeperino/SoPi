@@ -9,6 +9,7 @@
 #include "../flag.h"
 
 #include "image.h"
+#include "sorting.h"
 
 #include <time.h>
 #include <stdio.h>
@@ -17,7 +18,6 @@
 #define OUT_DIR  "out/"
 #define OUTNAME  "sorted_"
 
-static const char *FILENAME;
 inline bool is_dir_sep(char c) { return c == '/' || c == '\\'; }
 
 // we don't care about invalid paths since they'll already be checked
@@ -40,6 +40,7 @@ int main(int argc, char **argv) {
   float *flag_resize_factor = flag_float("r", 1.0, "Resize factor");
   bool *flag_gay = flag_bool("gay", false, "Skips pixel sorting, giving it a rainbow stripes effect");
   bool *flag_mask_only = flag_bool("mask", false, "Only generate the mask without sorting");
+  char **flag_dir = flag_str("dir", "right", "Direction in which to sort pixels [up, down, right, left]");
   char **flag_out_path = flag_str("o", NULL, "Custom output path\n        Default: ./out/sorted_<FILENAME>");
   bool *help = flag_bool("help", false, "Print this message");
 
@@ -67,12 +68,12 @@ int main(int argc, char **argv) {
     exit(1);
   }
 
+  const char *FILENAME = *rest_argv;
   float resize_factor = *flag_resize_factor;
   bool gay = *flag_gay;
   bool mask_only = *flag_mask_only;
   MIN = *flag_min;
   MAX = *flag_max;
-  FILENAME = *rest_argv;
 
   const char *img_path;
   if (!nob_file_exists(img_path = FILENAME)) {
@@ -86,6 +87,17 @@ int main(int argc, char **argv) {
   if (*flag_out_path) out_path = *flag_out_path;
   else out_path = nob_temp_sprintf(OUT_DIR OUTNAME "%s", basename(FILENAME));
 
+  if      (strcmp("up",    *flag_dir) == 0 || strcmp("U", *flag_dir) == 0) sort_direction = UP;
+  else if (strcmp("down",  *flag_dir) == 0 || strcmp("D", *flag_dir) == 0) sort_direction = DOWN;
+  else if (strcmp("right", *flag_dir) == 0 || strcmp("R", *flag_dir) == 0) sort_direction = RIGHT;
+  else if (strcmp("left",  *flag_dir) == 0 || strcmp("L", *flag_dir) == 0) sort_direction = LEFT;
+  else {
+    usage(stderr);
+    fprintf(stderr, "ERROR: Invalid direction provided\n");
+    exit(1);
+  }
+
+  printf("sorting direction = %s (%d)\n", *flag_dir, sort_direction);
   printf("resize factor = %f\n", resize_factor);
   printf("min threshold = %zu\nmax threshold = %zu\n", MIN, MAX);
   printf("input image = %s\n", img_path);

@@ -1,8 +1,14 @@
 #ifndef SORTING_H_
 #define SORTING_H_
 
-#include <stdbool.h>
 #include "color.h"
+#include <stdbool.h>
+#include <stddef.h>
+
+typedef enum { UP, DOWN, RIGHT, LEFT, SORT_DIR_INVALID } SortDirection;
+
+extern size_t MIN, MAX;
+extern SortDirection sort_direction;
 
 // mask sort functions
 bool by_value(Color c);
