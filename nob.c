@@ -10,10 +10,10 @@ Procs procs = {0};
 
 int build_object(const char *obj, const char *file, const char *impl) {
   if (needs_rebuild1(obj, file)) {
-  	cmd_append(&cmd, "cc", "-Wextra", "-Wall", "-std=c99");
-  	cmd_append(&cmd, "-O3", "-march=native");
-  	cmd_append(&cmd, "-x", "c", "-c", file, impl);
-  	cmd_append(&cmd, "-o", obj);
+    cmd_append(&cmd, "cc", "-Wextra", "-Wall", "-std=c99");
+    cmd_append(&cmd, "-O3", "-march=native");
+    cmd_append(&cmd, "-x", "c", "-c", file, impl);
+    cmd_append(&cmd, "-o", obj);
     return cmd_run(&cmd, .async = &procs);
   }
   return 1;
@@ -30,15 +30,15 @@ int main(int argc, char **argv) {
   if (!procs_flush(&procs)) return 1;
 
 	// cc -std=c99 -o sort sort.c stb_image.o stb_image_write.o -lm -O3 -march=native
-	cmd_append(&cmd, "cc", "-Wextra", "-Wall"/* , "-std=c99" */);
-	cmd_append(&cmd, "-o", BUILD_DIR "pixel_sorter");
-	cmd_append(&cmd, "-lm", "-O3", "-march=native", "-flto=auto");
-	cmd_append(&cmd, SRC_DIR "sort.c", BUILD_DIR "stb_image.o", BUILD_DIR "stb_image_write.o", BUILD_DIR "stb_image_resize.o");
-	if (!cmd_run(&cmd)) return 1;
+  cmd_append(&cmd, "cc", "-Wextra", "-Wall"/* , "-std=c99" */, "-ggdb");
+  cmd_append(&cmd, "-o", BUILD_DIR "pixel_sorter");
+  cmd_append(&cmd, "-lm", "-O3", "-march=native", "-flto=auto");
+  cmd_append(&cmd, SRC_DIR "sort.c", BUILD_DIR "stb_image.o", BUILD_DIR "stb_image_write.o", BUILD_DIR "stb_image_resize.o");
+  if (!cmd_run(&cmd)) return 1;
 
-	cmd_append(&cmd, BUILD_DIR "pixel_sorter");
-	for (int i = 0; i < argc; ++i) cmd_append(&cmd, argv[i]);
-	if (!cmd_run(&cmd)) return 1;
+  cmd_append(&cmd, BUILD_DIR "pixel_sorter");
+  for (int i = 0; i < argc; ++i) cmd_append(&cmd, argv[i]);
+  if (!cmd_run(&cmd)) return 1;
 
   return 0;
 }
