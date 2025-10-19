@@ -4,6 +4,7 @@
 
 #define BUILD_DIR "build/"
 #define SRC_DIR   "src/"
+#define EXT_DIR   "external/"
 
 Cmd cmd = {0};
 Procs procs = {0};
@@ -24,16 +25,17 @@ int main(int argc, char **argv) {
   if (!mkdir_if_not_exists(BUILD_DIR)) return 1;
   shift(argv, argc);
 
-  if (!build_object(BUILD_DIR "stb_image.o", SRC_DIR "stb_image.h", "-DSTB_IMAGE_IMPLEMENTATION")) return 1;
-  if (!build_object(BUILD_DIR "stb_image_write.o", SRC_DIR "stb_image_write.h", "-DSTB_IMAGE_WRITE_IMPLEMENTATION")) return 1;
-  if (!build_object(BUILD_DIR "stb_image_resize.o", SRC_DIR "stb_image_resize2.h", "-DSTB_IMAGE_RESIZE_IMPLEMENTATION")) return 1;
+  if (!build_object(BUILD_DIR "stb_image.o", EXT_DIR "stb_image.h", "-DSTB_IMAGE_IMPLEMENTATION")) return 1;
+  if (!build_object(BUILD_DIR "stb_image_write.o", EXT_DIR "stb_image_write.h", "-DSTB_IMAGE_WRITE_IMPLEMENTATION")) return 1;
+  if (!build_object(BUILD_DIR "stb_image_resize.o", EXT_DIR "stb_image_resize2.h", "-DSTB_IMAGE_RESIZE_IMPLEMENTATION")) return 1;
   if (!procs_flush(&procs)) return 1;
 
 	// cc -std=c99 -o sort sort.c stb_image.o stb_image_write.o -lm -O3 -march=native
   cmd_append(&cmd, "cc", "-Wextra", "-Wall"/* , "-std=c99" */, "-ggdb");
   cmd_append(&cmd, "-o", BUILD_DIR "pixel_sorter");
   cmd_append(&cmd, "-lm", "-O3", "-march=native", "-flto=auto");
-  cmd_append(&cmd, SRC_DIR "sort.c", BUILD_DIR "stb_image.o", BUILD_DIR "stb_image_write.o", BUILD_DIR "stb_image_resize.o");
+  cmd_append(&cmd, SRC_DIR "pixel_sorter.c", SRC_DIR "image.c", SRC_DIR "color.c", SRC_DIR "sorting.c");
+  cmd_append(&cmd, BUILD_DIR "stb_image.o", BUILD_DIR "stb_image_write.o", BUILD_DIR "stb_image_resize.o");
   if (!cmd_run(&cmd)) return 1;
 
   cmd_append(&cmd, BUILD_DIR "pixel_sorter");
