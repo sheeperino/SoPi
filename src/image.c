@@ -32,12 +32,13 @@ int image_load(const char *path) {
 void image_sort(bool gay, bool mask_only) {
   mask = malloc(x*y);
   image_mask(data, mask, by_value);
-  // TODO: how to combine mask and gay?
   if (mask_only) {
     for (int i = 0; i < x * y; ++i) {
-      ((uint32_t *)data)[i] = (mask[i] ? 0xFFFFFFFF : 0xFF000000);
+      uint32_t mask_on = (gay ? ((uint32_t *)data)[i] : 0xFFFFFFFF);
+      ((uint32_t *)data)[i] = (mask[i] ? mask_on : 0xFF000000);
     }
-  } else {
+  }
+  if (gay || !mask_only) {
     sort_intervals_vert(data, mask, gay);
   }
 }
