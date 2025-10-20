@@ -46,32 +46,31 @@ void sort_intervals_horiz(uint8_t *data, bool *mask, bool gay) {
   }
 }
 
-// TODO: analyze why these intervals look "disjointed" (without gay)
 void sort_intervals_vert(uint8_t *data, bool *mask, bool gay) {
+  bool new_strip = true;
   uint32_t strip_col;
+  int start = 0;
   uint32_t *tmp = malloc(y*CHANNELS);
-  for (int i = 0; i < x; ++i) {
-    int start = 0;
-    bool new_strip = true;
-    for (int j = 0; j < y; ++j) {
-      if (mask[i + j*x] == 0) {
-        if (!new_strip && !gay) {
-          qsort(tmp, j - start, sizeof(uint32_t), sort_pixels);
-          for (int k = start; k < j; ++k) {
-            ((uint32_t *)data)[i + k*x] = tmp[k];
-          }
+  for (int i = 0; i < x*y; ++i) {
+    int j = x*(i%y) + i/y;
+    if (mask[j] == 0 || i/y != start/y) {
+      if (!new_strip && !gay) {
+        qsort(tmp, i - start, sizeof(uint32_t), sort_pixels);
+        for (int k = start; k < i; ++k) {
+          int idx = x*(k%y) + k/y;
+          ((uint32_t *)data)[idx] = tmp[k - start];
         }
-        new_strip = true;
       }
-      if (mask[i + j*x]) tmp[j - start] = ((uint32_t *)data)[i + j*x];
-      if (mask[i + j*x] == 1 && new_strip) {
-        Color r = rand_color();
-        strip_col = col2abgr(r);
-        new_strip = false;
-        start = j;
-      }
-      if (gay && mask[i + j*x] == 1) ((uint32_t *)data)[i + j*x] = strip_col;
+      new_strip = true;
     }
+    if (mask[j] == 1 && new_strip) {
+      Color r = rand_color();
+      strip_col = col2abgr(r);
+      new_strip = false;
+      start = i;
+    }
+    if (mask[j] == 1) tmp[i - start] = ((uint32_t *)data)[j];
+    if (gay && mask[j] == 1) ((uint32_t *)data)[j] = strip_col;
   }
   free(tmp);
 }
