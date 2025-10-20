@@ -30,10 +30,10 @@ void sort_intervals_horiz(uint8_t *data, bool *mask, bool gay) {
   bool new_strip = true;
   uint32_t strip_col;
   int start = 0;
-  for (int i = 0; i < x * y; ++i) {
-    if (mask[i] == 0 || i / x != start / x) {
+  for (size_t i = 0; i < x*y; ++i) {
+    if (mask[i] == 0 || i/x != start/x) {
       if (!new_strip && !gay)
-        qsort(data + start * CHANNELS, (i - start), sizeof(data[0]) * CHANNELS, sort_pixels);
+        qsort(data + start*CHANNELS, (i - start), sizeof(data[0])*CHANNELS, sort_pixels);
       new_strip = true;
     }
     if (mask[i] == 1 && new_strip) {
@@ -51,12 +51,12 @@ void sort_intervals_vert(uint8_t *data, bool *mask, bool gay) {
   uint32_t strip_col;
   int start = 0;
   uint32_t *tmp = malloc(y*CHANNELS);
-  for (int i = 0; i < x*y; ++i) {
-    int j = x*(i%y) + i/y;
+  for (size_t i = 0; i < x*y; ++i) {
+    size_t j = x*(i%y) + i/y;
     if (mask[j] == 0 || i/y != start/y) {
       if (!new_strip && !gay) {
         qsort(tmp, i - start, sizeof(uint32_t), sort_pixels);
-        for (int k = start; k < i; ++k) {
+        for (size_t k = start; k < i; ++k) {
           int idx = x*(k%y) + k/y;
           ((uint32_t *)data)[idx] = tmp[k - start];
         }

@@ -13,7 +13,7 @@ bool *mask;
 int x, y, n;
 
 void image_mask(uint8_t *img, bool *mask, bool f(Color)) {
-  for (int i = 0; i < x * y; ++i) {
+  for (size_t i = 0; i < x*y; ++i) {
     uint32_t p = ((uint32_t *)img)[i];
     Color c = abgr2col(p);
     mask[i] = f(c);
@@ -34,7 +34,7 @@ void image_sort(bool gay, bool mask_only, bool no_mask) {
   else memset(mask, 1, x*y);
 
   if (mask_only) {
-    for (int i = 0; i < x * y; ++i) {
+    for (size_t i = 0; i < x*y; ++i) {
       uint32_t mask_on = (gay ? ((uint32_t *)data)[i] : 0xFFFFFFFF);
       ((uint32_t *)data)[i] = (mask[i] ? mask_on : 0xFF000000);
     }
@@ -50,16 +50,16 @@ void image_sort(bool gay, bool mask_only, bool no_mask) {
 int image_resize(float resize_factor) {
   if (resize_factor != 1.0) {
     data = stbir_resize_uint8_linear(
-        data, x, y, x * CHANNELS, NULL, (int)(x * resize_factor),
-        (int)(y * resize_factor), (int)(x * resize_factor) * CHANNELS,
+        data, x, y, x*CHANNELS, NULL, (int)(x*resize_factor),
+        (int)(y*resize_factor), (int)(x*resize_factor)*CHANNELS,
         STBIR_ABGR);
   }
   return (data ? 1 : 0);
 }
 
 int image_write(const char *path, float resize_factor) {
-  return stbi_write_png(path, (int)(x * resize_factor), (int)(y * resize_factor),
-                        CHANNELS, data, (int)(x * resize_factor) * CHANNELS);
+  return stbi_write_png(path, (int)(x*resize_factor), (int)(y*resize_factor),
+                        CHANNELS, data, (int)(x*resize_factor)*CHANNELS);
 }
 
 void image_free() {

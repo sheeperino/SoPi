@@ -38,7 +38,7 @@ Hsv col2hsv(Color col) {
     return hsv;
   }
   if (max > 0.0) { // NOTE: if Max is == 0, this divide would cause a crash
-    hsv.s = (delta / max); // s
+    hsv.s = (delta/max); // s
   } else {
     // if max is 0, then r = g = b = 0
     // s = 0, h is undefined
