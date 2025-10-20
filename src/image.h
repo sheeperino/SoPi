@@ -15,9 +15,9 @@ extern bool *mask;
 extern size_t MIN, MAX;
 extern int x, y, n;
 
-void image_mask(uint8_t *img, bool *mask, bool f(Color));
+void image_mask(uint8_t *img, bool *mask, bool invert, bool f(Color));
 int image_load(const char *path);
-void image_sort(bool gay, bool mask_only, bool no_mask, bool threshold_f(Color));
+void image_sort(bool gay, bool mask_only, bool no_mask, bool inv_mask, bool threshold_f(Color));
 int image_resize(float resize_factor);
 int image_write(const char *path, float resize_factor);
 void image_free();
