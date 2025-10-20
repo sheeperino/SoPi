@@ -13,7 +13,7 @@ bool *mask;
 int x, y, n;
 
 void image_mask(uint8_t *img, bool *mask, bool f(Color)) {
-  for (size_t i = 0; i < x*y; ++i) {
+  for (int i = 0; i < x*y; ++i) {
     uint32_t p = ((uint32_t *)img)[i];
     Color c = abgr2col(p);
     mask[i] = f(c);
@@ -34,7 +34,7 @@ void image_sort(bool gay, bool mask_only, bool no_mask) {
   else memset(mask, 1, x*y);
 
   if (mask_only) {
-    for (size_t i = 0; i < x*y; ++i) {
+    for (int i = 0; i < x*y; ++i) {
       uint32_t mask_on = (gay ? ((uint32_t *)data)[i] : 0xFFFFFFFF);
       ((uint32_t *)data)[i] = (mask[i] ? mask_on : 0xFF000000);
     }
