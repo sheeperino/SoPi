@@ -28,9 +28,11 @@ int image_load(const char *path) {
 }
 
 // in sorting or image?
-void image_sort(bool gay, bool mask_only) {
+void image_sort(bool gay, bool mask_only, bool no_mask) {
   mask = malloc(x*y);
-  image_mask(data, mask, by_value);
+  if (!no_mask) image_mask(data, mask, by_value);
+  else memset(mask, 1, x*y);
+
   if (mask_only) {
     for (int i = 0; i < x * y; ++i) {
       uint32_t mask_on = (gay ? ((uint32_t *)data)[i] : 0xFFFFFFFF);

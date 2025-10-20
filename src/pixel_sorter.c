@@ -40,6 +40,7 @@ int main(int argc, char **argv) {
   float *flag_resize_factor = flag_float("r", 1.0, "Resize factor");
   bool *flag_gay = flag_bool("gay", false, "Skips pixel sorting, giving it a rainbow stripes effect");
   bool *flag_mask_only = flag_bool("mask", false, "Only generate the mask without sorting");
+  bool *flag_no_mask = flag_bool("nomask", false, "Don't generate the mask. Sorts ALL pixels in a given direction");
   char **flag_dir = flag_str("dir", "right", "Direction in which to sort pixels [up, down, right, left]");
   char **flag_out_path = flag_str("o", NULL, "Custom output path\n        Default: ./out/sorted_<FILENAME>");
   bool *help = flag_bool("help", false, "Print this message");
@@ -72,6 +73,7 @@ int main(int argc, char **argv) {
   float resize_factor = *flag_resize_factor;
   bool gay = *flag_gay;
   bool mask_only = *flag_mask_only;
+  bool no_mask = *flag_no_mask;
   MIN = *flag_min;
   MAX = *flag_max;
 
@@ -113,7 +115,7 @@ int main(int argc, char **argv) {
     printf("Loaded.\n");
   }
 
-  image_sort(gay, mask_only);
+  image_sort(gay, mask_only, no_mask);
 
   printf("Resizing...\n");
   if (!image_resize(resize_factor)) {
