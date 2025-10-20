@@ -7,6 +7,14 @@
 size_t MIN, MAX;
 SortDirection sort_direction;
 
+bool by_hue(Color c) {
+  Hsv hsv = col2hsv(c);
+  return MASK_THRESHOLD(hsv.h);
+}
+bool by_saturation(Color c) {
+  Hsv hsv = col2hsv(c);
+  return MASK_THRESHOLD(hsv.s*255);
+}
 bool by_value(Color c) {
   Hsv hsv = col2hsv(c);
   return MASK_THRESHOLD(hsv.v);
@@ -14,6 +22,7 @@ bool by_value(Color c) {
 bool by_red(Color c) { return MASK_THRESHOLD(c.r); }
 bool by_green(Color c) { return MASK_THRESHOLD(c.g); }
 bool by_blue(Color c) { return MASK_THRESHOLD(c.b); }
+bool by_alpha(Color c) { return MASK_THRESHOLD(c.a); }
 
 int sort_pixels(const void *p1, const void *p2) {
   Color c1 = abgr2col(*(uint32_t *)p1);

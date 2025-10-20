@@ -28,18 +28,20 @@ int image_load(const char *path) {
 }
 
 // in sorting or image?
-void image_sort(bool gay, bool mask_only, bool no_mask) {
+void image_sort(bool gay, bool mask_only, bool no_mask, bool threshold_f(Color)) {
   mask = malloc(x*y);
-  if (!no_mask) image_mask(data, mask, by_value);
+  if (!no_mask) image_mask(data, mask, threshold_f);
   else memset(mask, 1, x*y);
 
   if (mask_only) {
+    printf("Generating mask...\n");
     for (int i = 0; i < x*y; ++i) {
       uint32_t mask_on = (gay ? ((uint32_t *)data)[i] : 0xFFFFFFFF);
       ((uint32_t *)data)[i] = (mask[i] ? mask_on : 0xFF000000);
     }
   }
   if (gay || !mask_only) {
+    printf("Sorting...\n");
     if (sort_direction == UP || sort_direction == DOWN)
       sort_intervals_vert(data, mask, gay);
     else

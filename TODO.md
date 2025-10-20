@@ -1,2 +1,2 @@
-- non hardcoded "sort by" options (both for generating the mask and for sorting the pixels)
+- sort by flag for intervals
 - gui
