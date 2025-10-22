@@ -16,6 +16,7 @@ extern size_t MIN, MAX;
 extern int x, y, n;
 
 void image_mask(uint8_t *img, bool *mask, bool invert, bool f(PsColor));
+void image_reset();
 int image_load(const char *path);
 void image_sort(bool gay, bool mask_only, bool no_mask, bool inv_mask, bool threshold_f(PsColor));
 int image_resize(int width, int height);

@@ -21,6 +21,10 @@ void image_mask(uint8_t *img, bool *mask, bool invert, bool f(PsColor)) {
   }
 }
 
+void image_reset() {
+  memcpy(data, orig_data, x*y*CHANNELS);
+}
+
 int image_load(const char *path) {
   orig_data = stbi_load(path, &x, &y, &n, CHANNELS);
   data = malloc(x*y*CHANNELS);
