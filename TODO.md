@@ -1,2 +1,3 @@
 - sort by flag for intervals
 - gui
+- IMPORTANT: separate gay from sorting algorithm (for real time performance improvement)
