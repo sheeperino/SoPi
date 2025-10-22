@@ -56,10 +56,10 @@ void image_sort(uint8_t *img, int x, int y, bool gay, bool mask_only, bool no_ma
 }
 
 int image_resize(uint8_t *out, int width, int height, int *out_x, int *out_y) {
-  *out_x = width;
-  *out_y = height;
-  out = stbir_resize_uint8_linear(Data, X, Y, X*CHANNELS, NULL,
-                                   width, height, width*CHANNELS, STBIR_ABGR);
+  if (out_x) *out_x = width;
+  if (out_y) *out_y = height;
+  out = stbir_resize_uint8_linear(Data, X, Y, X*CHANNELS,
+                                  out, width, height, width*CHANNELS, STBIR_ABGR);
   if (out == NULL) {
     *out_x = -1;
     *out_y = -1;
