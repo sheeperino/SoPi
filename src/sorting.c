@@ -35,7 +35,7 @@ int sort_pixels(const void *p1, const void *p2) {
   // return *(uint32_t *)p2 - *(uint32_t *)p1;
 }
 
-void sort_intervals_horiz(uint8_t *data, bool *mask, bool gay) {
+void sort_intervals_horiz(uint8_t *data, int x, int y, bool *mask, bool gay) {
   bool new_strip = true;
   uint32_t strip_col;
   int start = 0;
@@ -55,7 +55,7 @@ void sort_intervals_horiz(uint8_t *data, bool *mask, bool gay) {
   }
 }
 
-void sort_intervals_vert(uint8_t *data, bool *mask, bool gay) {
+void sort_intervals_vert(uint8_t *data, int x, int y,  bool *mask, bool gay) {
   bool new_strip = true;
   uint32_t strip_col;
   int start = 0;
