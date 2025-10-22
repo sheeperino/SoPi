@@ -7,26 +7,26 @@
 size_t MIN, MAX;
 SortDirection sort_direction;
 
-bool by_hue(Color c) {
+bool by_hue(PsColor c) {
   Hsv hsv = col2hsv(c);
   return MASK_THRESHOLD(hsv.h);
 }
-bool by_saturation(Color c) {
+bool by_saturation(PsColor c) {
   Hsv hsv = col2hsv(c);
   return MASK_THRESHOLD(hsv.s*255);
 }
-bool by_value(Color c) {
+bool by_value(PsColor c) {
   Hsv hsv = col2hsv(c);
   return MASK_THRESHOLD(hsv.v);
 }
-bool by_red(Color c) { return MASK_THRESHOLD(c.r); }
-bool by_green(Color c) { return MASK_THRESHOLD(c.g); }
-bool by_blue(Color c) { return MASK_THRESHOLD(c.b); }
-bool by_alpha(Color c) { return MASK_THRESHOLD(c.a); }
+bool by_red(PsColor c) { return MASK_THRESHOLD(c.r); }
+bool by_green(PsColor c) { return MASK_THRESHOLD(c.g); }
+bool by_blue(PsColor c) { return MASK_THRESHOLD(c.b); }
+bool by_alpha(PsColor c) { return MASK_THRESHOLD(c.a); }
 
 int sort_pixels(const void *p1, const void *p2) {
-  Color c1 = abgr2col(*(uint32_t *)p1);
-  Color c2 = abgr2col(*(uint32_t *)p2);
+  PsColor c1 = abgr2col(*(uint32_t *)p1);
+  PsColor c2 = abgr2col(*(uint32_t *)p2);
   // TODO: can choose between different values to sort
   if (sort_direction == LEFT || sort_direction == DOWN)
     return c1.g - c2.g;
@@ -46,7 +46,7 @@ void sort_intervals_horiz(uint8_t *data, bool *mask, bool gay) {
       new_strip = true;
     }
     if (mask[i] == 1 && new_strip) {
-      Color r = rand_color();
+      PsColor r = rand_color();
       strip_col = col2abgr(r);
       new_strip = false;
       start = i;
@@ -73,7 +73,7 @@ void sort_intervals_vert(uint8_t *data, bool *mask, bool gay) {
       new_strip = true;
     }
     if (mask[j] == 1 && new_strip) {
-      Color r = rand_color();
+      PsColor r = rand_color();
       strip_col = col2abgr(r);
       new_strip = false;
       start = i;

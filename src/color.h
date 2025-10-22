@@ -10,10 +10,10 @@ typedef struct {
 
 typedef struct {
   uint8_t r, g, b, a;
-} Color;
+} PsColor;
 
-Color rand_color();
-Color abgr2col(uint32_t abgr);
-Hsv col2hsv(Color col);
+PsColor rand_color();
+PsColor abgr2col(uint32_t abgr);
+Hsv col2hsv(PsColor col);
 
 #endif // COLOR_H_

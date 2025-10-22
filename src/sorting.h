@@ -11,13 +11,13 @@ extern size_t MIN, MAX;
 extern SortDirection sort_direction;
 
 // mask sort functions
-bool by_hue(Color c);
-bool by_saturation(Color c);
-bool by_value(Color c);
-bool by_red(Color c);
-bool by_green(Color c);
-bool by_blue(Color c);
-bool by_alpha(Color c); // mostly really useful for transparent images
+bool by_hue(PsColor c);
+bool by_saturation(PsColor c);
+bool by_value(PsColor c);
+bool by_red(PsColor c);
+bool by_green(PsColor c);
+bool by_blue(PsColor c);
+bool by_alpha(PsColor c); // mostly really useful for transparent images
 
 // pixel sorting functions
 int sort_pixels(const void *p1, const void *p2);

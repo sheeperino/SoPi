@@ -2,8 +2,8 @@
 #include <math.h>
 #include <stdlib.h>
 
-Color rand_color() {
-  Color c;
+PsColor rand_color() {
+  PsColor c;
   c.a = 0xFF;
   c.r = rand();
   c.g = rand();
@@ -11,8 +11,8 @@ Color rand_color() {
   return c;
 }
 
-Color abgr2col(uint32_t abgr) {
-  Color c;
+PsColor abgr2col(uint32_t abgr) {
+  PsColor c;
   c.a = (abgr >> 24) & 0xFF;
   c.b = (abgr >> 16) & 0xFF;
   c.g = (abgr >>  8) & 0xFF;
@@ -20,7 +20,7 @@ Color abgr2col(uint32_t abgr) {
   return c;
 }
 
-Hsv col2hsv(Color col) {
+Hsv col2hsv(PsColor col) {
   Hsv hsv;
   float min, max, delta;
 

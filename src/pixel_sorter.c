@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
     exit(1);
   }
 
-  bool (*thresh_fun)(Color);
+  bool (*thresh_fun)(PsColor);
   if      (!strcmp("red",        *flag_thresh_fun) || !strcmp("r", *flag_thresh_fun)) thresh_fun = by_red;
   else if (!strcmp("green",      *flag_thresh_fun) || !strcmp("g", *flag_thresh_fun)) thresh_fun = by_green;
   else if (!strcmp("blue",       *flag_thresh_fun) || !strcmp("b", *flag_thresh_fun)) thresh_fun = by_blue;
