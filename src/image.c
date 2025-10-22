@@ -35,14 +35,14 @@ void image_sort(bool gay, bool mask_only, bool no_mask, bool inv_mask, bool thre
   else memset(mask, 1, x*y);
 
   if (mask_only) {
-    printf("Generating mask...\n");
+    // printf("Generating mask...\n");
     for (int i = 0; i < x*y; ++i) {
       uint32_t mask_on = (gay ? ((uint32_t *)data)[i] : 0xFFFFFFFF);
       ((uint32_t *)data)[i] = (mask[i] ? mask_on : 0xFF000000);
     }
   }
   if (gay || !mask_only) {
-    printf("Sorting...\n");
+    // printf("Sorting...\n");
     if (sort_direction == UP || sort_direction == DOWN)
       sort_intervals_vert(data, mask, gay);
     else
@@ -50,14 +50,16 @@ void image_sort(bool gay, bool mask_only, bool no_mask, bool inv_mask, bool thre
   }
 }
 
-int image_resize(float resize_factor) {
-  if (resize_factor != 1.0) {
-    data = stbir_resize_uint8_linear(
-        data, x, y, x*CHANNELS, NULL, (int)(x*resize_factor),
-        (int)(y*resize_factor), (int)(x*resize_factor)*CHANNELS,
-        STBIR_ABGR);
-  }
+int image_resize(int width, int height) {
+  data = stbir_resize_uint8_linear(data, x, y, x*CHANNELS, NULL,
+                                   width, height, width*CHANNELS, STBIR_ABGR);
   return (data ? 1 : 0);
+}
+
+int image_resize_fact(float resize_factor) {
+  if (resize_factor != 1.0)
+    return image_resize(x*resize_factor, y*resize_factor);
+  return 1;
 }
 
 int image_write(const char *path, float resize_factor) {

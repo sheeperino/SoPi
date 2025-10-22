@@ -137,7 +137,7 @@ int main(int argc, char **argv) {
   image_sort(gay, mask_only, no_mask, inv_mask, thresh_fun);
 
   printf("Resizing...\n");
-  if (!image_resize(resize_factor)) {
+  if (!image_resize_fact(resize_factor)) {
     fprintf(stderr, "ERROR: Couldn't resize image\n");
     nob_return_defer(1);
   } else {

@@ -17,8 +17,9 @@ extern int x, y, n;
 
 void image_mask(uint8_t *img, bool *mask, bool invert, bool f(PsColor));
 int image_load(const char *path);
-int image_resize(float resize_factor);
 void image_sort(bool gay, bool mask_only, bool no_mask, bool inv_mask, bool threshold_f(PsColor));
+int image_resize(int width, int height);
+int image_resize_fact(float resize_factor);
 int image_write(const char *path, float resize_factor);
 void image_free();
 
