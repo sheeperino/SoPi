@@ -28,7 +28,7 @@ int sort_pixels(const void *p1, const void *p2) {
   PsColor c1 = abgr2col(*(uint32_t *)p1);
   PsColor c2 = abgr2col(*(uint32_t *)p2);
   // TODO: can choose between different values to sort
-  if (sort_direction == LEFT || sort_direction == DOWN)
+  if (sort_direction == RIGHT || sort_direction == DOWN)
     return c1.g - c2.g;
   else
     return c2.g - c1.g;
