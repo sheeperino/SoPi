@@ -12,7 +12,6 @@
 // globals
 extern uint8_t *Data;
 extern bool *mask;
-extern size_t MIN, MAX;
 extern int X, Y, N;
 
 void image_mask(uint8_t *img, int x, int y, bool *mask, bool invert, bool f(PsColor));
