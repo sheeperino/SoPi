@@ -145,7 +145,7 @@ int main(int argc, char **argv) {
   }
 
   printf("Writing...\n");
-  if (!image_write(out_path, resize_factor)) {
+  if (!image_write(Data, X, Y, out_path)) {
     fprintf(stderr, "ERROR: Couldn't write image\n");
     nob_return_defer(1);
   } else {

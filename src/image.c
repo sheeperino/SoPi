@@ -1,8 +1,6 @@
 #include "image.h"
 #include "sorting.h"
 #include <string.h>
-
-#undef STB_IMAGE_WRITE_STATIC
 #include "../external/stb_image.h"
 #include "../external/stb_image_write.h"
 #include "../external/stb_image_resize2.h"
@@ -23,7 +21,7 @@ void image_mask(uint8_t *img, int x, int y, bool *mask, bool invert, thresh_sort
 
 void image_reset() {
   // WIP
-  // memcpy(data, orig_data, x*y*CHANNELS);
+  memcpy(Data, orig_data, X*Y*CHANNELS);
 }
 
 int image_load(const char *path) {
@@ -74,9 +72,8 @@ int image_resize_fact(uint8_t *out, float resize_factor, int *out_x, int *out_y)
   return 1;
 }
 
-int image_write(const char *path, float resize_factor) {
-  return stbi_write_png(path, (int)(X*resize_factor), (int)(Y*resize_factor),
-                        CHANNELS, Data, (int)(X*resize_factor)*CHANNELS);
+int image_write(uint8_t *data, int width, int height, const char *path) {
+  return stbi_write_png(path, width, height, CHANNELS, data, width*CHANNELS);
 }
 
 void image_free() {
