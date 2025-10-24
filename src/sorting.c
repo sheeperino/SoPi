@@ -24,6 +24,33 @@ bool by_green(PsColor c) { return MASK_THRESHOLD(c.g); }
 bool by_blue(PsColor c) { return MASK_THRESHOLD(c.b); }
 bool by_alpha(PsColor c) { return MASK_THRESHOLD(c.a); }
 
+ThresholdBounds get_threshold_bounds(ThresholdSortBy sort_by) {
+  ThresholdBounds b;
+  switch (sort_by) {
+    case BY_HUE:
+      b.min = 0; b.max = 360;
+      break;
+    case BY_SATURATION: case BY_VALUE:
+    case BY_RED: case BY_GREEN: case BY_BLUE: case BY_ALPHA:
+      b.min = 0; b.max = 255;
+      break;
+  }
+  return b;
+}
+
+thresh_sort_func enum_to_thresh_func(ThresholdSortBy sort_by) {
+  switch (sort_by) {
+    case BY_HUE: return by_hue;
+    case BY_SATURATION: return by_saturation;
+    case BY_VALUE: return by_value;
+    case BY_RED: return by_red;
+    case BY_GREEN: return by_green;
+    case BY_BLUE: return by_blue;
+    case BY_ALPHA: return by_alpha;
+  }
+  return NULL;
+}
+
 int sort_pixels(const void *p1, const void *p2) {
   PsColor c1 = abgr2col(*(uint32_t *)p1);
   PsColor c2 = abgr2col(*(uint32_t *)p2);

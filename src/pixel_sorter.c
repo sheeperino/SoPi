@@ -103,14 +103,14 @@ int main(int argc, char **argv) {
     exit(1);
   }
 
-  bool (*thresh_fun)(PsColor);
-  if      (!strcmp("red",        *flag_thresh_fun) || !strcmp("r", *flag_thresh_fun)) thresh_fun = by_red;
-  else if (!strcmp("green",      *flag_thresh_fun) || !strcmp("g", *flag_thresh_fun)) thresh_fun = by_green;
-  else if (!strcmp("blue",       *flag_thresh_fun) || !strcmp("b", *flag_thresh_fun)) thresh_fun = by_blue;
-  else if (!strcmp("alpha",      *flag_thresh_fun) || !strcmp("a", *flag_thresh_fun)) thresh_fun = by_alpha;
-  else if (!strcmp("hue",        *flag_thresh_fun) || !strcmp("h", *flag_thresh_fun)) thresh_fun = by_hue;
-  else if (!strcmp("saturation", *flag_thresh_fun) || !strcmp("s", *flag_thresh_fun)) thresh_fun = by_saturation;
-  else if (!strcmp("value",      *flag_thresh_fun) || !strcmp("v", *flag_thresh_fun)) thresh_fun = by_value;
+  thresh_sort_func thresh_func;
+  if      (!strcmp("red",        *flag_thresh_fun) || !strcmp("r", *flag_thresh_fun)) thresh_func = by_red;
+  else if (!strcmp("green",      *flag_thresh_fun) || !strcmp("g", *flag_thresh_fun)) thresh_func = by_green;
+  else if (!strcmp("blue",       *flag_thresh_fun) || !strcmp("b", *flag_thresh_fun)) thresh_func = by_blue;
+  else if (!strcmp("alpha",      *flag_thresh_fun) || !strcmp("a", *flag_thresh_fun)) thresh_func = by_alpha;
+  else if (!strcmp("hue",        *flag_thresh_fun) || !strcmp("h", *flag_thresh_fun)) thresh_func = by_hue;
+  else if (!strcmp("saturation", *flag_thresh_fun) || !strcmp("s", *flag_thresh_fun)) thresh_func = by_saturation;
+  else if (!strcmp("value",      *flag_thresh_fun) || !strcmp("v", *flag_thresh_fun)) thresh_func = by_value;
   else {
     usage(stderr);
     fprintf(stderr, "ERROR: Invalid threshold property provided\n");
@@ -119,7 +119,7 @@ int main(int argc, char **argv) {
 
   printf("sorting direction = %s (%d)\n", *flag_dir, sort_direction);
   printf("resize factor = %f\n", resize_factor);
-  printf("min threshold = %zu\nmax threshold = %zu\n", MIN, MAX);
+  printf("min threshold = %d\nmax threshold = %d\n", MIN, MAX);
   printf("threshold property = %s\n", *flag_thresh_fun);
   printf("input image = %s\n", img_path);
   printf("output image = %s\n", out_path);
@@ -134,7 +134,7 @@ int main(int argc, char **argv) {
     printf("Loaded.\n");
   }
 
-  image_sort(Data, X, Y, gay, mask_only, no_mask, inv_mask, thresh_fun);
+  image_sort(Data, X, Y, gay, mask_only, no_mask, inv_mask, thresh_func);
 
   printf("Resizing...\n");
   if (!image_resize_fact(Data, resize_factor, NULL, NULL)) {

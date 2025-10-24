@@ -12,7 +12,7 @@ uint8_t *Data;
 bool *mask;
 int X, Y, N;
 
-void image_mask(uint8_t *img, int x, int y, bool *mask, bool invert, bool f(PsColor)) {
+void image_mask(uint8_t *img, int x, int y, bool *mask, bool invert, thresh_sort_func f) {
   for (int i = 0; i < x*y; ++i) {
     uint32_t p = ((uint32_t *)img)[i];
     PsColor c = abgr2col(p);
@@ -34,7 +34,7 @@ int image_load(const char *path) {
 }
 
 // in sorting or image?
-void image_sort(uint8_t *img, int x, int y, bool gay, bool mask_only, bool no_mask, bool inv_mask, bool threshold_f(PsColor)) {
+void image_sort(uint8_t *img, int x, int y, bool gay, bool mask_only, bool no_mask, bool inv_mask, thresh_sort_func threshold_f) {
   mask = malloc(x*y);
   if (!no_mask) image_mask(img, x, y, mask, inv_mask, threshold_f);
   else memset(mask, 1, x*y);
