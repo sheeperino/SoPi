@@ -7,7 +7,7 @@
 
 typedef enum { UP, DOWN, RIGHT, LEFT, SORT_DIR_INVALID } SortDirection;
 
-extern size_t MIN, MAX;
+extern int MIN, MAX;
 extern SortDirection sort_direction;
 
 // mask sort functions

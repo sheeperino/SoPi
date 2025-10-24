@@ -4,7 +4,7 @@
 
 #define MASK_THRESHOLD(val) (val >= MIN && val <= MAX ? 1 : 0)
 
-size_t MIN, MAX;
+int MIN, MAX;
 SortDirection sort_direction;
 
 bool by_hue(PsColor c) {
