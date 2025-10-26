@@ -382,12 +382,12 @@ void GuiWindowFileDialog(GuiWindowFileDialogState *state)
         GuiComboBox((Rectangle){ state->windowBounds.x + 96, state->windowBounds.y + state->windowBounds.height - 24 - 12, state->windowBounds.width - 184 - 24, 24 }, "All files", &state->fileTypeActive);
 
         state->SelectFilePressed = GuiButton((Rectangle){ state->windowBounds.x + state->windowBounds.width - 96 - 8, state->windowBounds.y + state->windowBounds.height - 68, 96, 24 }, "Select");
-
-        if (GuiButton((Rectangle){ state->windowBounds.x + state->windowBounds.width - 96 - 8, state->windowBounds.y + state->windowBounds.height - 24 - 12, 96, 24 }, "Cancel")) state->windowActive = false;
+        state->CancelFilePressed = GuiButton((Rectangle){ state->windowBounds.x + state->windowBounds.width - 96 - 8, state->windowBounds.y + state->windowBounds.height - 24 - 12, 96, 24 }, "Cancel");
         //--------------------------------------------------------------------------------------
 
-        // Exit on file selected
+        // Exit on file selected or canceled
         if (state->SelectFilePressed) state->windowActive = false;
+        if (state->CancelFilePressed) state->windowActive = false;
 
         // File dialog has been closed, free all memory before exit
         if (!state->windowActive)
