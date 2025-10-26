@@ -37,6 +37,7 @@ void state_image_update(State *s) {
 void state_dialog_init(State *s) {
   s->dialog = InitGuiWindowFileDialog(GetWorkingDirectory());
   s->dialog.supportDrag = false;
+  s->dialog.windowBounds = (Rectangle){0, 0, s->img_area_w, s->img_area_h};
   strcpy(s->dialog.filterExt, "DIR;.png;.bmp;.tga;.gif;.jpg;.jpeg;.psd;.hdr;.qoi;.dds;.pkm;.ktx;.pvr;.astc");
 }
 

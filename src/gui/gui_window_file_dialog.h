@@ -102,7 +102,7 @@ extern "C" {            // Prevents name mangling of functions
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
 GuiWindowFileDialogState InitGuiWindowFileDialog(const char *initPath);
-void GuiWindowFileDialog(GuiWindowFileDialogState *state, Rectangle bounds);
+void GuiWindowFileDialog(GuiWindowFileDialogState *state);
 
 #ifdef __cplusplus
 }
@@ -220,11 +220,10 @@ GuiWindowFileDialogState InitGuiWindowFileDialog(const char *initPath)
 }
 
 // Update and draw file dialog
-void GuiWindowFileDialog(GuiWindowFileDialogState *state, Rectangle bounds)
+void GuiWindowFileDialog(GuiWindowFileDialogState *state)
 {
     if (state->windowActive)
     {
-        state->windowBounds = bounds;
         // Update window dragging
         //----------------------------------------------------------------------------------------
         if (state->supportDrag)

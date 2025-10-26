@@ -58,7 +58,7 @@ void draw_main_gui(State *s) {
     GuiDrawText("Open or Drag & Drop an image to get started.", (Rectangle){0, 0, s->img_area_w, s->img_area_h}, TEXT_ALIGN_CENTER, WHITE);
     GuiSetStyle(DEFAULT, TEXT_SIZE, default_text_size);
   } else if (s->app_state == STATE_PICK_IMAGE) {
-    GuiWindowFileDialog(&s->dialog, (Rectangle){0, 0, s->img_area_w, s->img_area_h});
+    GuiWindowFileDialog(&s->dialog);
   }
 
   draw_sidebar(s, (Rectangle){GetScreenWidth() - s->sidewidth, 0, s->sidewidth, GetScreenHeight()});
