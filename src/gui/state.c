@@ -59,7 +59,8 @@ void state_main_update(State *s) {
     } else if (s->dialog.CancelFilePressed) {
       s->dialog.windowActive = false;
       s->dialog.CancelFilePressed = false;
-      s->app_state = STATE_NO_IMAGE;
+      if (s->orig_img.data) s->app_state = STATE_MAIN;
+      else s->app_state = STATE_NO_IMAGE;
     }
   } else if (s->app_state == STATE_SAVE_IMAGE) {
     s->dialog.windowActive = true;

@@ -48,6 +48,7 @@ bool draw_slider_with_value_box(Rectangle box_rect, Rectangle slider_rect, int m
 void draw_main_gui(State *s) {
   ClearBackground(bg_color);
   if (s->app_state == STATE_MAIN) {
+    GuiSetState(STATE_NORMAL);
     GuiGrid((Rectangle){0, 0, s->img_area_w, GetScreenHeight()}, NULL, 25, 1, NULL);
     draw_image(s);
 
@@ -57,9 +58,12 @@ void draw_main_gui(State *s) {
     GuiSetStyle(DEFAULT, TEXT_SIZE, default_text_size*2);
     GuiDrawText("Open or Drag & Drop an image to get started.", (Rectangle){0, 0, s->img_area_w, s->img_area_h}, TEXT_ALIGN_CENTER, WHITE);
     GuiSetStyle(DEFAULT, TEXT_SIZE, default_text_size);
+    GuiSetState(STATE_NORMAL);
   } else if (s->app_state == STATE_PICK_IMAGE) {
+    GuiSetState(STATE_NORMAL);
     GuiWindowFileDialog(&s->dialog);
   } else if (s->app_state == STATE_SAVE_IMAGE) {
+    GuiSetState(STATE_NORMAL);
     GuiWindowFileDialog(&s->dialog);
   }
 
@@ -80,6 +84,16 @@ void draw_image(State *s) {
 void draw_sidebar(State *s, Rectangle r) {
   int sidepad = 40;
   DrawRectangle(r.x, 0, r.width, GetScreenHeight(), bg_color);
+
+  // open and save image buttons
+  if (s->app_state == STATE_PICK_IMAGE || s->app_state == STATE_SAVE_IMAGE) GuiSetState(STATE_DISABLED);
+  if (GuiButton((Rectangle){r.x + 10, 250, r.width - (sidepad - 10), 25}, "Open image..."))
+    s->app_state = STATE_PICK_IMAGE;
+
+  if (s->app_state == STATE_NO_IMAGE) GuiSetState(STATE_DISABLED);
+  if (GuiButton((Rectangle){r.x + 10, 280, r.width - (sidepad - 10), 25}, "Save image..."))
+    s->app_state = STATE_SAVE_IMAGE;
+
   // thresholds
   GuiDrawText("Min:", (Rectangle){r.x + 10, 5, r.width, 25}, 0, text_color);
   s->min_changed = draw_slider_with_value_box(
@@ -97,10 +111,6 @@ void draw_sidebar(State *s, Rectangle r) {
   s->mask_only_changed = GuiCheckBox((Rectangle){r.x + 10, 165, 15, 15}, "Mask only", &s->mask_only);
   s->no_mask_changed = GuiCheckBox((Rectangle){r.x + 10, 190, 15, 15}, "No mask", &s->no_mask);
   s->inv_mask_changed = GuiCheckBox((Rectangle){r.x + 10, 215, 15, 15}, "Invert mask", &s->inv_mask);
-
-  // open and save image buttons
-  if (GuiButton((Rectangle){r.x + 10, 250, r.width - (sidepad - 10), 25}, "Open image...")) s->app_state = STATE_PICK_IMAGE;
-  if (GuiButton((Rectangle){r.x + 10, 280, r.width - (sidepad - 10), 25}, "Save image...")) s->app_state = STATE_SAVE_IMAGE;
 
   // sort by
   GuiDrawText("Sort by:", (Rectangle){r.x + 10, 105, r.width, 25}, 0, text_color);
