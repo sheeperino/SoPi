@@ -1,3 +1,4 @@
+#include "../../nob.h"
 #include "state.h"
 #define RAYGUI_IMPLEMENTATION
 #include "../../external/raygui.h"
@@ -5,7 +6,6 @@
 #define GUI_WINDOW_FILE_DIALOG_IMPLEMENTATION
 #include "gui_window_file_dialog.h"
 #include "draw.h"
-#include "../../nob.h"
 #include "style_amber.h"
 
 static Color bg_color;
@@ -59,6 +59,8 @@ void draw_main_gui(State *s) {
     GuiSetStyle(DEFAULT, TEXT_SIZE, default_text_size);
   } else if (s->app_state == STATE_PICK_IMAGE) {
     GuiWindowFileDialog(&s->dialog);
+  } else if (s->app_state == STATE_SAVE_IMAGE) {
+    GuiWindowFileDialog(&s->dialog);
   }
 
   draw_sidebar(s, (Rectangle){GetScreenWidth() - s->sidewidth, 0, s->sidewidth, GetScreenHeight()});
@@ -96,8 +98,9 @@ void draw_sidebar(State *s, Rectangle r) {
   s->no_mask_changed = GuiCheckBox((Rectangle){r.x + 10, 190, 15, 15}, "No mask", &s->no_mask);
   s->inv_mask_changed = GuiCheckBox((Rectangle){r.x + 10, 215, 15, 15}, "Invert mask", &s->inv_mask);
 
-  // open image button
+  // open and save image buttons
   if (GuiButton((Rectangle){r.x + 10, 250, r.width - (sidepad - 10), 25}, "Open image...")) s->app_state = STATE_PICK_IMAGE;
+  if (GuiButton((Rectangle){r.x + 10, 280, r.width - (sidepad - 10), 25}, "Save image...")) s->app_state = STATE_SAVE_IMAGE;
 
   // sort by
   GuiDrawText("Sort by:", (Rectangle){r.x + 10, 105, r.width, 25}, 0, text_color);

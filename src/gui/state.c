@@ -2,7 +2,6 @@
 #include "../image.h"
 #include "state.h"
 #include "string.h"
-// #include "gui_window_file_dialog.h"
 #include <raylib.h>
 #include <stdio.h>
 
@@ -42,18 +41,7 @@ void state_dialog_init(State *s) {
 }
 
 void state_main_update(State *s) {
-  if (s->app_state == STATE_PICK_IMAGE) {
-    s->dialog.windowActive = true;
-    if (s->dialog.SelectFilePressed) {
-      printf("slect\n");
-      state_image_load(s, nob_temp_sprintf("%s/%s", s->dialog.dirPathText, s->dialog.fileNameText));
-      s->dialog.SelectFilePressed = false;
-    } else if (s->dialog.CancelFilePressed) {
-      printf("cancel\n");
-      s->dialog.windowActive = false;
-      s->app_state = STATE_NO_IMAGE;
-    }
-  } else if (s->app_state == STATE_MAIN) {
+  if (s->app_state == STATE_MAIN) {
     update_state_entry_comp(s, &sort_direction, &s->sort_dir_drop, int);
     update_state_entry_comp(s, &s->t_sort_by, &s->t_sort_by_drop, int);
     update_state_entry_change(s, s->min_changed);
@@ -62,6 +50,32 @@ void state_main_update(State *s) {
     update_state_entry_change(s, s->mask_only_changed);
     update_state_entry_change(s, s->no_mask_changed);
     update_state_entry_change(s, s->inv_mask_changed);
+  } else if (s->app_state == STATE_PICK_IMAGE) {
+    s->dialog.windowActive = true;
+    if (s->dialog.SelectFilePressed) {
+      state_image_load(s, nob_temp_sprintf("%s/%s", s->dialog.dirPathText, s->dialog.fileNameText));
+      s->dialog.windowActive = false;
+      s->dialog.SelectFilePressed = false;
+    } else if (s->dialog.CancelFilePressed) {
+      s->dialog.windowActive = false;
+      s->dialog.CancelFilePressed = false;
+      s->app_state = STATE_NO_IMAGE;
+    }
+  } else if (s->app_state == STATE_SAVE_IMAGE) {
+    s->dialog.windowActive = true;
+    s->dialog.saveFileMode = true;
+    if (s->dialog.SelectFilePressed) {
+      const char *save_path = nob_temp_sprintf("%s/%s", s->dialog.dirPathText, s->dialog.fileNameText);
+      printf("path = %s\n", save_path);
+      if (!state_image_write(s, save_path)) printf("couldn't save image\n");
+      s->dialog.windowActive = false;
+      s->dialog.SelectFilePressed = false;
+    } else if (s->dialog.CancelFilePressed) {
+      s->dialog.windowActive = false;
+      s->dialog.saveFileMode = false;
+      s->dialog.CancelFilePressed = false;
+      s->app_state = STATE_MAIN;
+    }
   }
 }
 
@@ -98,6 +112,20 @@ int state_image_load(State *s, const char *path) {
   return 1;
 }
 
+int state_image_write(State *s, const char *path) {
+  int size = s->orig_img.width*s->orig_img.height*CHANNELS;
+  uint8_t *orig_but_sorted = malloc(size);
+  memcpy(orig_but_sorted, s->orig_img.data, size);
+
+  image_sort(orig_but_sorted, s->orig_img.width, s->orig_img.height,
+             s->gay, s->mask_only, s->no_mask, s->inv_mask, enum_to_thresh_func(s->t_sort_by));
+  int ret = image_write(orig_but_sorted, s->orig_img.width, s->orig_img.height, path);
+  free(orig_but_sorted);
+
+  s->app_state = STATE_MAIN;
+  return ret;
+}
+
 static void state_image_free(State *s) {
   image_free();
   if (s->orig_resized_img.data) UnloadImage(s->orig_resized_img);
@@ -126,6 +154,7 @@ void state_handle_resize(State *s) {
     s->img_area_h = GetScreenHeight();
     s->width_ratio = s->img_area_w/(float)X;
     s->height_ratio = s->img_area_h/(float)Y;
+    s->dialog.windowBounds = (Rectangle){0, 0, s->img_area_w, s->img_area_h};
   }
   if (s->app_state == STATE_MAIN && needs_resize && time - last_resized > 0.05) {
     needs_resize = false;
