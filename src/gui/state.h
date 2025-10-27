@@ -24,6 +24,7 @@ typedef struct {
   Image orig_img, orig_resized_img, resized_img;
   Texture2D tex;
 
+  ThresholdBounds thresholds;
   int sort_dir_drop; bool sort_dir_drop_show;
   ThresholdSortBy t_sort_by; int t_sort_by_drop; bool t_sort_by_drop_show;
 

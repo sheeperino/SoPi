@@ -98,11 +98,11 @@ void draw_sidebar(State *s, Rectangle r) {
   GuiDrawText("Min:", (Rectangle){r.x + 10, 5, r.width, 25}, 0, text_color);
   s->min_changed = draw_slider_with_value_box(
     (Rectangle){r.x + sidepad, 5, 35, 25}, (Rectangle){r.x + sidepad + 55, 5, 100, 25},
-    0, 255, &MIN);
+    s->thresholds.min, s->thresholds.max, &MIN);
   GuiDrawText("Max:", (Rectangle){r.x + 10, 35, r.width, 25}, 0, text_color);
   s->max_changed = draw_slider_with_value_box(
     (Rectangle){r.x + sidepad, 35, 35, 25}, (Rectangle){r.x + sidepad + 55, 35, 100, 25},
-    0, 255, &MAX);
+    s->thresholds.min, s->thresholds.max, &MAX);
 
   // we draw these in reverse order to avoid overlap
   // -----------------------------------------------

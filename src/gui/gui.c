@@ -31,6 +31,7 @@ int main() {
     .t_sort_by = BY_VALUE, .t_sort_by_drop = S.t_sort_by,
     0,
   };
+  S.thresholds = get_threshold_bounds(S.t_sort_by);
   state_dialog_init(&S);
 
   // if (!state_image_load(&S, "img/coros2.jpg")) return 1;
