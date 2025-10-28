@@ -38,14 +38,12 @@ void image_sort(uint8_t *img, int x, int y, bool gay, bool mask_only, bool no_ma
   else memset(mask, 1, x*y);
 
   if (mask_only) {
-    // printf("Generating mask...\n");
     for (int i = 0; i < x*y; ++i) {
       uint32_t mask_on = (gay ? ((uint32_t *)img)[i] : 0xFFFFFFFF);
       ((uint32_t *)img)[i] = (mask[i] ? mask_on : 0xFF000000);
     }
   }
   if (gay || !mask_only) {
-    // printf("Sorting...\n");
     if (sort_direction == UP || sort_direction == DOWN)
       sort_intervals_vert(img, x, y, mask, gay);
     else
@@ -56,7 +54,7 @@ void image_sort(uint8_t *img, int x, int y, bool gay, bool mask_only, bool no_ma
 int image_resize(uint8_t *out, int width, int height, int *out_x, int *out_y) {
   if (out_x) *out_x = width;
   if (out_y) *out_y = height;
-  out = stbir_resize_uint8_linear(Data, X, Y, X*CHANNELS,
+  stbir_resize_uint8_linear(Data, X, Y, X*CHANNELS,
                                   out, width, height, width*CHANNELS, STBIR_ABGR);
   if (out == NULL) {
     *out_x = -1;
