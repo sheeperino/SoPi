@@ -16,7 +16,7 @@ int main() {
 
   int sidewidth = 250;
 
-  MIN = 50; MAX = 255;
+  MIN = 50; MAX = 200;
   sort_direction = UP;
 
   State S = {
@@ -25,21 +25,21 @@ int main() {
     .img_area_w = GetScreenWidth() - sidewidth,
     .img_area_h = GetScreenHeight(),
     .sidewidth = sidewidth,
-    .min = 50, .max = 255,
     .min_changed = true, .max_changed = true,
     .sort_dir_drop = sort_direction,
     .t_sort_by = BY_VALUE, .t_sort_by_drop = S.t_sort_by,
     0,
   };
   S.thresholds = get_threshold_bounds(S.t_sort_by);
-  state_dialog_init(&S);
-
   // if (!state_image_load(&S, "img/coros2.jpg")) return 1;
+  S.cam = (Camera2D){{S.img_area_w/2.0, S.img_area_h/2.0}, {S.img_area_w/2.0, S.img_area_h/2.0}, 0, 1.0};
+  state_dialog_init(&S);
 
   float last_resized = GetTime();
   bool needs_resize = false;
   while (!WindowShouldClose()) {
     state_main_update(&S);
+    state_handle_pan_and_zoom(&S);
     state_handle_resize(&S);
     state_handle_file_drops(&S);
 

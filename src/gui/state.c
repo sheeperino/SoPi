@@ -2,6 +2,8 @@
 #include "../image.h"
 #include "state.h"
 #include "string.h"
+#include "raymath.h"
+#include <math.h>
 #include <raylib.h>
 #include <stdio.h>
 
@@ -133,6 +135,42 @@ static void state_image_free(State *s) {
   if (s->orig_resized_img.data) UnloadImage(s->orig_resized_img);
   if (s->resized_img.data) UnloadImage(s->resized_img);
   UnloadTexture(s->tex);
+}
+
+void state_handle_pan_and_zoom(State *s) {
+  if (s->app_state != STATE_MAIN) return;
+
+  float zoom_fact = 0.2;
+  float zoom_min = 0.125;
+  float zoom_max = 128.0;
+
+  char ch = GetCharPressed();
+  int key = GetKeyPressed();
+  Vector2 mpos = GetMousePosition();
+  Vector2 wpos = GetScreenToWorld2D(mpos, s->cam);
+
+  if (ch == '+') s->cam.zoom = Clamp(expf(logf(s->cam.zoom) + zoom_fact), zoom_min, zoom_max);
+  if (ch == '-') s->cam.zoom = Clamp(expf(logf(s->cam.zoom) - zoom_fact), zoom_min, zoom_max);
+  if (ch == '0') {
+    s->cam.zoom = 1.0;
+    s->cam.target = (Vector2){s->img_area_w/2.0, s->img_area_h/2.0};
+    s->cam.offset = (Vector2){s->img_area_w/2.0, s->img_area_h/2.0};
+  }
+
+  if (CheckCollisionPointRec(mpos, (Rectangle){0, 0, s->img_area_w, s->img_area_h})) {
+    if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+      Vector2 md = GetMouseDelta();
+      s->cam.target.x -= md.x/s->cam.zoom;
+      s->cam.target.y -= md.y/s->cam.zoom;
+    }
+
+    float wy = GetMouseWheelMoveV().y;
+    if (wy != 0) {
+      s->cam.offset = mpos;
+      s->cam.target = wpos;
+      s->cam.zoom = Clamp(expf(logf(s->cam.zoom) + zoom_fact*wy), zoom_min, zoom_max);
+    }
+  }
 }
 
 void state_handle_file_drops(State *s) {

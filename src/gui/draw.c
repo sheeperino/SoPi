@@ -1,5 +1,6 @@
 #include "../../nob.h"
 #include "state.h"
+#include <raylib.h>
 #define RAYGUI_IMPLEMENTATION
 #include "../../external/raygui.h"
 #undef RAYGUI_IMPLEMENTATION
@@ -49,8 +50,11 @@ void draw_main_gui(State *s) {
   ClearBackground(bg_color);
   if (s->app_state == STATE_MAIN) {
     GuiSetState(STATE_NORMAL);
-    GuiGrid((Rectangle){0, 0, s->img_area_w, GetScreenHeight()}, NULL, 25, 1, NULL);
-    draw_image(s);
+    GuiGrid((Rectangle){0, 0, s->img_area_w, s->img_area_h}, NULL, 25, 1, NULL);
+
+    BeginMode2D(s->cam);
+      draw_image(s);
+    EndMode2D();
 
     if (s->sort_dir_drop_show || s->t_sort_by_drop_show) GuiLock();
     else GuiUnlock();
