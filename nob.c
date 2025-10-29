@@ -12,7 +12,7 @@ Procs procs = {0};
 bool cli_only = false;
 
 static const char *cli_sources[] = {
-  SRC_DIR "pixel_sorter.c", SRC_DIR "image.c", SRC_DIR "color.c", SRC_DIR "sorting.c",
+  SRC_DIR "sopi.c", SRC_DIR "image.c", SRC_DIR "color.c", SRC_DIR "sorting.c",
 };
 static const char *gui_sources[] = {
   SRC_DIR "gui/gui.c", SRC_DIR "gui/state.c", SRC_DIR "gui/draw.c",
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 
   // linux build
   cmd_append(&cmd, "cc", "-Wextra", "-Wall", "-ggdb");
-  cmd_append(&cmd, "-o", BUILD_DIR "pixel_sorter");
+  cmd_append(&cmd, "-o", BUILD_DIR "sopi");
   cmd_append(&cmd, "-lm", "-O3", "-march=native", "-flto=auto");
   for (size_t i = 0; i < ARRAY_LEN(cli_sources); ++i) cmd_append(&cmd, cli_sources[i]);
   cmd_append(&cmd, BUILD_DIR "stb/linux/stb_image.o", BUILD_DIR "stb/linux/stb_image_write.o", BUILD_DIR "stb/linux/stb_image_resize.o");
@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
 
   // windows build
   cmd_append(&cmd, "x86_64-w64-mingw32-gcc", "-mwindows", "-Wall", "-Wextra");
-  cmd_append(&cmd, "-o", BUILD_DIR "pixel_sorter");
+  cmd_append(&cmd, "-o", BUILD_DIR "sopi");
   cmd_append(&cmd, "-lm", "-O3", "-flto=auto");
   for (size_t i = 0; i < ARRAY_LEN(cli_sources); ++i) cmd_append(&cmd, cli_sources[i]);
   cmd_append(&cmd, BUILD_DIR "stb/windows/stb_image.o", BUILD_DIR "stb/windows/stb_image_write.o", BUILD_DIR "stb/windows/stb_image_resize.o");
@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
 
   if (!procs_flush(&procs)) return 1;
 
-  cmd_append(&cmd, BUILD_DIR "pixel_sorter");
+  cmd_append(&cmd, BUILD_DIR "sopi");
   for (int i = 0; i < argc; ++i) cmd_append(&cmd, argv[i]);
   if (!cmd_run(&cmd)) return 1;
 
