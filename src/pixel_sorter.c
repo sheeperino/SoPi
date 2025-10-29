@@ -8,6 +8,10 @@
 #define FLAG_IMPLEMENTATION
 #include "../flag.h"
 
+#ifndef CLI_ONLY
+#include "gui/gui.h"
+#endif
+
 #include "image.h"
 #include "sorting.h"
 
@@ -47,6 +51,10 @@ int main(int argc, char **argv) {
   char **flag_dir = flag_str("dir", "right", "Direction in which to sort pixels [up, down, right, left]");
   char **flag_out_path = flag_str("o", NULL, "Custom output path\n        Default: ./out/sorted_<FILENAME>");
   bool *help = flag_bool("help", false, "Print this message");
+  bool *flag_gui = NULL;
+  #ifndef CLI_ONLY
+    flag_gui = flag_bool("gui", false, "Launch the app in gui mode");
+  #endif
 
   if (!flag_parse(argc, argv)) {
     usage(stderr);
@@ -134,22 +142,29 @@ int main(int argc, char **argv) {
     printf("Loaded.\n");
   }
 
-  image_sort(Data, X, Y, gay, mask_only, no_mask, inv_mask, thresh_func);
-
-  printf("Resizing...\n");
-  if (!image_resize_fact(Data, resize_factor, NULL, NULL)) {
-    fprintf(stderr, "ERROR: Couldn't resize image\n");
-    nob_return_defer(1);
+  if (flag_gui != NULL && *flag_gui) {
+    #ifndef CLI_ONLY
+      sopi_gui();
+    #endif
+    return result;
   } else {
-    printf("Resized.\n");
-  }
+    image_sort(Data, X, Y, gay, mask_only, no_mask, inv_mask, thresh_func);
 
-  printf("Writing...\n");
-  if (!image_write(Data, X, Y, out_path)) {
-    fprintf(stderr, "ERROR: Couldn't write image\n");
-    nob_return_defer(1);
-  } else {
-    printf("Wrote.\n");
+    printf("Resizing...\n");
+    if (!image_resize_fact(Data, resize_factor, NULL, NULL)) {
+      fprintf(stderr, "ERROR: Couldn't resize image\n");
+      nob_return_defer(1);
+    } else {
+      printf("Resized.\n");
+    }
+
+    printf("Writing...\n");
+    if (!image_write(Data, X, Y, out_path)) {
+      fprintf(stderr, "ERROR: Couldn't write image\n");
+      nob_return_defer(1);
+    } else {
+      printf("Wrote.\n");
+    }
   }
 
 defer:

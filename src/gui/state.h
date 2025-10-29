@@ -39,6 +39,7 @@ typedef struct {
 
 void state_dialog_init(State *s);
 
+int state_image_load_from_memory(State *s, uint8_t *data, int width, int height);
 int state_image_load(State *s, const char *path);
 int state_image_write(State *s, const char *path);
 void state_image_update(State *s);

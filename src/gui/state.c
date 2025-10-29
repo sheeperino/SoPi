@@ -87,9 +87,7 @@ inline static float calc_resize_factor(State *s) {
   return (s->width_ratio > s->height_ratio ? s->height_ratio : s->width_ratio);
 }
 
-int state_image_load(State *s, const char *path) {
-  if (!image_load(path)) return 0;
-
+int state_image_load_from_memory(State *s, uint8_t *data, int width, int height) {
   Image orig_img = {0};
   orig_img.data = Data;
   orig_img.width = X;
@@ -113,6 +111,12 @@ int state_image_load(State *s, const char *path) {
 
   s->app_state = STATE_MAIN;
   state_image_update(s);
+  return 1;
+}
+
+int state_image_load(State *s, const char *path) {
+  if (!image_load(path)) return 0;
+  state_image_load_from_memory(s, Data, X, Y);
   return 1;
 }
 
