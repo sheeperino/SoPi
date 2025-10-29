@@ -23,6 +23,13 @@
 #define OUTNAME  "sorted_"
 
 inline bool is_dir_sep(char c) { return c == '/' || c == '\\'; }
+inline bool run_with_gui(bool *gui_flag) {
+  #ifdef CLI_ONLY
+    return false;
+  #else
+    return *gui_flag;
+  #endif
+}
 
 // we don't care about invalid paths since they'll already be checked
 const char *basename(const char *s) {
@@ -69,7 +76,7 @@ int main(int argc, char **argv) {
   int rest_argc = flag_rest_argc();
   char **rest_argv = flag_rest_argv();
 
-  if (!rest_argc) {
+  if (!rest_argc && !run_with_gui(flag_gui)) {
     usage(stderr);
     fprintf(stderr, "ERROR: No input provided\n");
     exit(1);
@@ -89,7 +96,7 @@ int main(int argc, char **argv) {
   MIN = *flag_min;
   MAX = *flag_max;
 
-  const char *img_path;
+  const char *img_path = NULL;
   if (!nob_file_exists(img_path = FILENAME)) {
     if (is_dir_sep(FILENAME[0]) || !nob_file_exists(img_path = nob_temp_sprintf(IMG_DIR "%s", FILENAME))) {
       fprintf(stderr, "ERROR: Input path is not valid\n");
@@ -134,15 +141,19 @@ int main(int argc, char **argv) {
 
   int result = 0;
   srand(time(0));
-  printf("Loading...\n");
-  if (!image_load(img_path)) {
-    fprintf(stderr, "ERROR: Couldn't read image\n");
-    nob_return_defer(1);
+  if (run_with_gui(flag_gui) && img_path == NULL) {
+    // having an img_path for gui is optional
   } else {
-    printf("Loaded.\n");
+    printf("Loading...\n");
+    if (!image_load(img_path)) {
+      fprintf(stderr, "ERROR: Couldn't read image\n");
+      nob_return_defer(1);
+    } else {
+      printf("Loaded.\n");
+    }
   }
 
-  if (flag_gui != NULL && *flag_gui) {
+  if (run_with_gui(flag_gui)) {
     #ifndef CLI_ONLY
       sopi_gui();
     #endif
