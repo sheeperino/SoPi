@@ -26,9 +26,10 @@ void image_reset() {
 
 int image_load(const char *path) {
   orig_data = stbi_load(path, &X, &Y, &N, CHANNELS);
+  if (!orig_data) return 0;
   Data = malloc(X*Y*CHANNELS);
   memcpy(Data, orig_data, X*Y*CHANNELS);
-  return (Data ? 1 : 0);
+  return 1;
 }
 
 // in sorting or image?
