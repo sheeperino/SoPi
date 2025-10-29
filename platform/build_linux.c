@@ -1,9 +1,21 @@
-int build_object_linux(const char *obj, const char *file, const char *impl) {
-  if (needs_rebuild1(obj, file)) {
+#define build_object_linux(dest, src, ...)\
+  do {\
+    if (needs_rebuild1((dest), (src))) {\
+      cmd_append(&cmd, "cc", "-std=c99");\
+      cmd_append(&cmd, "-O3", "-march=native");\
+      cmd_append(&cmd, "-x", "c", "-c", (src));\
+      cmd_append(&cmd, __VA_ARGS__);\
+      cmd_append(&cmd, "-o", (dest));\
+      if (!cmd_run(&cmd, .async = &procs)) return 1;\
+    }\
+  } while (0)
+
+int _build_object_linux(const char *dest, const char *src, const char *impl) {
+  if (needs_rebuild1(dest, src)) {
     cmd_append(&cmd, "cc", "-Wextra", "-Wall", "-std=c99");
     cmd_append(&cmd, "-O3", "-march=native");
-    cmd_append(&cmd, "-x", "c", "-c", file, impl);
-    cmd_append(&cmd, "-o", obj);
+    cmd_append(&cmd, "-x", "c", "-c", src, impl);
+    cmd_append(&cmd, "-o", dest);
     return cmd_run(&cmd, .async = &procs);
   }
   return 1;

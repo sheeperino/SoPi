@@ -28,10 +28,6 @@ static const char *raylib_modules[] = {
 
 int main(int argc, char **argv) {
   NOB_GO_REBUILD_URSELF(argc, argv);
-  if (!mkdir_if_not_exists(BUILD_DIR)) return 1;
-  if (!mkdir_if_not_exists(BUILD_DIR "stb/")) return 1;
-  if (!mkdir_if_not_exists(BUILD_DIR "stb/linux/")) return 1;
-  if (!mkdir_if_not_exists(BUILD_DIR "stb/windows/")) return 1;
   shift(argv, argc);
 
   // NOTE: use -- if you want to pass arguments to the program instead of to nob
@@ -40,7 +36,7 @@ int main(int argc, char **argv) {
     if (strcmp(arg, "--") == 0) break;
     if (strcmp(arg, "clean") == 0) {
       if (file_exists(BUILD_DIR)) {
-        cmd_append(&cmd, "rm", "-rf", BUILD_DIR "raylib");
+        cmd_append(&cmd, "rm", "-rf", BUILD_DIR);
         if (!cmd_run(&cmd)) return 1;
       }
     } else if (strcmp(arg, "cli_only") == 0) {
@@ -48,22 +44,32 @@ int main(int argc, char **argv) {
     }
   }
 
+  if (!mkdir_if_not_exists(BUILD_DIR)) return 1;
+  if (!mkdir_if_not_exists(BUILD_DIR "stb/")) return 1;
+  if (!mkdir_if_not_exists(BUILD_DIR "stb/linux/")) return 1;
+  if (!mkdir_if_not_exists(BUILD_DIR "stb/windows/")) return 1;
+  if (!mkdir_if_not_exists(BUILD_DIR "raygui/")) return 1;
+  if (!mkdir_if_not_exists(BUILD_DIR "raygui/linux/")) return 1;
+  if (!mkdir_if_not_exists(BUILD_DIR "raygui/windows/")) return 1;
+
   if (!cli_only) {
     if (!build_raylib_linux()) return 1;
     if (!build_raylib_windows()) return 1;
     procs_flush(&procs);
   }
 
-  if (!build_object_linux(BUILD_DIR "stb/linux/stb_image.o", EXT_DIR "stb_image.h", "-DSTB_IMAGE_IMPLEMENTATION")) return 1;
-  if (!build_object_linux(BUILD_DIR "stb/linux/stb_image_write.o", EXT_DIR "stb_image_write.h", "-DSTB_IMAGE_WRITE_IMPLEMENTATION")) return 1;
-  if (!build_object_linux(BUILD_DIR "stb/linux/stb_image_resize.o", EXT_DIR "stb_image_resize2.h", "-DSTB_IMAGE_RESIZE_IMPLEMENTATION")) return 1;
+  // stb
+  build_object_linux(BUILD_DIR "stb/linux/stb_image.o", EXT_DIR "stb_image.h", "-DSTB_IMAGE_IMPLEMENTATION");
+  build_object_linux(BUILD_DIR "stb/linux/stb_image_write.o", EXT_DIR "stb_image_write.h", "-DSTB_IMAGE_WRITE_IMPLEMENTATION");
+  build_object_linux(BUILD_DIR "stb/linux/stb_image_resize.o", EXT_DIR "stb_image_resize2.h", "-DSTB_IMAGE_RESIZE_IMPLEMENTATION");
 
-  if (!build_object_windows(BUILD_DIR "stb/windows/stb_image.o", EXT_DIR "stb_image.h", "-DSTB_IMAGE_IMPLEMENTATION")) return 1;
-  if (!build_object_windows(BUILD_DIR "stb/windows/stb_image_write.o", EXT_DIR "stb_image_write.h", "-DSTB_IMAGE_WRITE_IMPLEMENTATION")) return 1;
-  if (!build_object_windows(BUILD_DIR "stb/windows/stb_image_resize.o", EXT_DIR "stb_image_resize2.h", "-DSTB_IMAGE_RESIZE_IMPLEMENTATION")) return 1;
+  build_object_windows(BUILD_DIR "stb/windows/stb_image.o", EXT_DIR "stb_image.h", "-DSTB_IMAGE_IMPLEMENTATION");
+  build_object_windows(BUILD_DIR "stb/windows/stb_image_write.o", EXT_DIR "stb_image_write.h", "-DSTB_IMAGE_WRITE_IMPLEMENTATION");
+  build_object_windows(BUILD_DIR "stb/windows/stb_image_resize.o", EXT_DIR "stb_image_resize2.h", "-DSTB_IMAGE_RESIZE_IMPLEMENTATION");
 
   if (!procs_flush(&procs)) return 1;
 
+  // linux build
   cmd_append(&cmd, "cc", "-Wextra", "-Wall", "-ggdb");
   cmd_append(&cmd, "-o", BUILD_DIR "pixel_sorter");
   cmd_append(&cmd, "-lm", "-O3", "-march=native", "-flto=auto");
@@ -78,6 +84,7 @@ int main(int argc, char **argv) {
   }
   if (!cmd_run(&cmd, .async = &procs)) return 1;
 
+  // windows build
   cmd_append(&cmd, "x86_64-w64-mingw32-gcc", "-mwindows", "-Wall", "-Wextra");
   cmd_append(&cmd, "-o", BUILD_DIR "pixel_sorter");
   cmd_append(&cmd, "-lm", "-O3", "-flto=auto");
@@ -97,7 +104,6 @@ int main(int argc, char **argv) {
   if (!procs_flush(&procs)) return 1;
 
   cmd_append(&cmd, BUILD_DIR "pixel_sorter");
-  for (int i = 0; i < argc; ++i) printf("arg = %s\n", argv[i]);
   for (int i = 0; i < argc; ++i) cmd_append(&cmd, argv[i]);
   if (!cmd_run(&cmd)) return 1;
 

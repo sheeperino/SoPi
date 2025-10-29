@@ -4,7 +4,19 @@
 #define MAYBE_PREFIXED(x) "x86_64-w64-mingw32-"x
 #endif // _WIN32
 
-int build_object_windows(const char *obj, const char *file, const char *impl) {
+#define build_object_windows(dest, src, ...)\
+  do {\
+    if (needs_rebuild1((dest), (src))) {\
+      cmd_append(&cmd, "x86_64-w64-mingw32-gcc", "-std=c99");\
+      cmd_append(&cmd, "-O3", "-march=native");\
+      cmd_append(&cmd, "-x", "c", "-c", (src));\
+      cmd_append(&cmd, __VA_ARGS__);\
+      cmd_append(&cmd, "-o", (dest));\
+      if (!cmd_run(&cmd, .async = &procs)) return 1;\
+    }\
+  } while (0)
+
+int _build_object_windows(const char *obj, const char *file, const char *impl) {
   if (needs_rebuild1(obj, file)) {
     cmd_append(&cmd, "x86_64-w64-mingw32-gcc", "-Wextra", "-Wall", "-std=c99");
     cmd_append(&cmd, "-O3", "-march=native");

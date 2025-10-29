@@ -45,7 +45,7 @@ void state_dialog_init(State *s) {
 void state_main_update(State *s) {
   if (s->app_state == STATE_MAIN) {
     update_state_entry_comp(s, &sort_direction, &s->sort_dir_drop, int);
-    if (s->t_sort_by != s->t_sort_by_drop) s->thresholds = get_threshold_bounds(s->t_sort_by_drop);
+    if ((int)s->t_sort_by != s->t_sort_by_drop) s->thresholds = get_threshold_bounds(s->t_sort_by_drop);
     update_state_entry_comp(s, &s->t_sort_by, &s->t_sort_by_drop, int);
     update_state_entry_change(s, s->min_changed);
     update_state_entry_change(s, s->max_changed);
