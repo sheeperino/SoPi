@@ -148,20 +148,20 @@ void state_handle_pan_and_zoom(State *s) {
   float zoom_min = 0.125;
   float zoom_max = 128.0;
 
-  char ch = GetCharPressed();
   int key = GetKeyPressed();
   Vector2 mpos = GetMousePosition();
   Vector2 wpos = GetScreenToWorld2D(mpos, s->cam);
 
-  if (ch == '+') s->cam.zoom = Clamp(expf(logf(s->cam.zoom) + zoom_fact), zoom_min, zoom_max);
-  if (ch == '-') s->cam.zoom = Clamp(expf(logf(s->cam.zoom) - zoom_fact), zoom_min, zoom_max);
-  if (ch == '0') {
-    s->cam.zoom = 1.0;
-    s->cam.target = (Vector2){s->img_area_w/2.0, s->img_area_h/2.0};
-    s->cam.offset = (Vector2){s->img_area_w/2.0, s->img_area_h/2.0};
-  }
-
   if (CheckCollisionPointRec(mpos, (Rectangle){0, 0, s->img_area_w, s->img_area_h})) {
+    char ch = GetCharPressed();
+    if (ch == '+') s->cam.zoom = Clamp(expf(logf(s->cam.zoom) + zoom_fact), zoom_min, zoom_max);
+    if (ch == '-') s->cam.zoom = Clamp(expf(logf(s->cam.zoom) - zoom_fact), zoom_min, zoom_max);
+    if (ch == '0') {
+      s->cam.zoom = 1.0;
+      s->cam.target = (Vector2){s->img_area_w/2.0, s->img_area_h/2.0};
+      s->cam.offset = (Vector2){s->img_area_w/2.0, s->img_area_h/2.0};
+    }
+
     if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
       Vector2 md = GetMouseDelta();
       s->cam.target.x -= md.x/s->cam.zoom;
@@ -200,6 +200,7 @@ void state_handle_resize(State *s) {
     s->height_ratio = s->img_area_h/(float)Y;
     s->dialog.windowBounds = (Rectangle){0, 0, s->img_area_w, s->img_area_h};
   }
+  // image resize logic
   if (s->app_state == STATE_MAIN && needs_resize && time - last_resized > 0.05) {
     needs_resize = false;
 
