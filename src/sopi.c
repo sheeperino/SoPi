@@ -22,8 +22,8 @@
 #define OUT_DIR  "out/"
 #define OUTNAME  "sorted_"
 
-inline bool is_dir_sep(char c) { return c == '/' || c == '\\'; }
-inline bool run_with_gui(bool *gui_flag) {
+static inline bool is_dir_sep(char c) { return c == '/' || c == '\\'; }
+static inline bool run_with_gui(bool *gui_flag) {
   #ifdef CLI_ONLY
     return false;
   #else
