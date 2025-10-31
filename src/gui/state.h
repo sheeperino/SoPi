@@ -17,6 +17,7 @@ typedef struct {
   AppState app_state;
   GuiWindowFileDialogState dialog;
   Camera2D cam; // for panning/zoom
+  bool help_menu;
 
   float rfact, width_ratio, height_ratio;
   int img_area_w, img_area_h;
@@ -45,6 +46,7 @@ int state_image_write(State *s, const char *path);
 void state_image_update(State *s);
 void state_main_update(State *state);
 
+void state_handle_keybindings(State *s, bool *quit);
 void state_handle_pan_and_zoom(State *s);
 void state_handle_file_drops(State *s);
 void state_handle_resize(State *s);

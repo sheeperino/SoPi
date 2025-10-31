@@ -72,6 +72,39 @@ void draw_main_gui(State *s) {
   }
 
   draw_sidebar(s, (Rectangle){GetScreenWidth() - s->sidewidth, 0, s->sidewidth, GetScreenHeight()});
+  if (s->help_menu) draw_help_menu(s);
+}
+
+void draw_help_menu(State *s) {
+  const char *lines[] = {
+    "Ctrl-O: Open image\n",
+    "Ctrl-S: Save image\n",
+    "Ctrl-Q: Quit\n",
+    "F1: Show this message\n",
+    nob_temp_sprintf("%d FPS", GetFPS()),
+  };
+  size_t arr_len = NOB_ARRAY_LEN(lines);
+  int width = 0;
+  for (size_t i = 0; i < arr_len; ++i) {
+    int lw = GuiGetTextWidth(lines[i]);
+    if (lw > width) width = lw;
+  }
+  float height = (float)(arr_len*GuiGetStyle(DEFAULT, TEXT_SIZE) + (int)((arr_len - 1)*GuiGetStyle(DEFAULT, TEXT_SIZE)/2));
+
+  // draw transparent box behind
+  Rectangle area = {10, 10, width + 20, height + 20};
+  DrawRectangleRec(area, Fade(bg_color, 0.67));
+
+  // text
+  Nob_String_Builder text = {0};
+  for (size_t i = 0; i < arr_len; ++i) nob_sb_appendf(&text, "%s", lines[i]);
+  nob_sb_append_null(&text);
+
+  area.x += 10;
+  area.y += 10;
+  GuiSetStyle(DEFAULT, TEXT_ALIGNMENT_VERTICAL, TEXT_ALIGN_TOP);
+  GuiDrawText(text.items, area, 0, text_color);
+  GuiSetStyle(DEFAULT, TEXT_ALIGNMENT_VERTICAL, TEXT_ALIGN_MIDDLE);
 }
 
 void draw_image(State *s) {

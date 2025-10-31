@@ -55,11 +55,11 @@ void state_main_update(State *s) {
     update_state_entry_change(s, s->inv_mask_changed);
   } else if (s->app_state == STATE_PICK_IMAGE) {
     s->dialog.windowActive = true;
-    if (s->dialog.SelectFilePressed) {
+    if (s->dialog.SelectFilePressed || IsKeyPressed(KEY_ENTER)) {
       state_image_load(s, nob_temp_sprintf("%s/%s", s->dialog.dirPathText, s->dialog.fileNameText));
       s->dialog.windowActive = false;
       s->dialog.SelectFilePressed = false;
-    } else if (s->dialog.CancelFilePressed) {
+    } else if (s->dialog.CancelFilePressed || IsKeyPressed(KEY_ESCAPE)) {
       s->dialog.windowActive = false;
       s->dialog.CancelFilePressed = false;
       if (s->orig_img.data) s->app_state = STATE_MAIN;
@@ -68,13 +68,13 @@ void state_main_update(State *s) {
   } else if (s->app_state == STATE_SAVE_IMAGE) {
     s->dialog.windowActive = true;
     s->dialog.saveFileMode = true;
-    if (s->dialog.SelectFilePressed) {
+    if (s->dialog.SelectFilePressed || IsKeyPressed(KEY_ENTER)) {
       const char *save_path = nob_temp_sprintf("%s/%s", s->dialog.dirPathText, s->dialog.fileNameText);
       printf("path = %s\n", save_path);
       if (!state_image_write(s, save_path)) printf("couldn't save image\n");
       s->dialog.windowActive = false;
       s->dialog.SelectFilePressed = false;
-    } else if (s->dialog.CancelFilePressed) {
+    } else if (s->dialog.CancelFilePressed || IsKeyPressed(KEY_ESCAPE)) {
       s->dialog.windowActive = false;
       s->dialog.saveFileMode = false;
       s->dialog.CancelFilePressed = false;
@@ -139,6 +139,17 @@ static void state_image_free(State *s) {
   if (s->orig_resized_img.data) UnloadImage(s->orig_resized_img);
   if (s->resized_img.data) UnloadImage(s->resized_img);
   UnloadTexture(s->tex);
+}
+
+void state_handle_keybindings(State *s, bool *quit) {
+  if (IsKeyDown(KEY_LEFT_CONTROL)) {
+    if (IsKeyPressed(KEY_Q)) *quit = true;
+    if (IsKeyPressed(KEY_O) && (s->app_state == STATE_MAIN || s->app_state == STATE_NO_IMAGE))
+      s->app_state = STATE_PICK_IMAGE;
+    if (IsKeyPressed(KEY_S) && (s->app_state == STATE_MAIN)) s->app_state = STATE_SAVE_IMAGE;
+  } else if (IsKeyPressed(KEY_F1)) {
+    s->help_menu = !s->help_menu;
+  }
 }
 
 void state_handle_pan_and_zoom(State *s) {

@@ -9,6 +9,7 @@
 int sopi_gui() {
   InitWindow(1280, 720, "sopi gui");
   SetTargetFPS(60);
+  SetExitKey(KEY_NULL);
   SetWindowState(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
   draw_init_raygui();
 
@@ -31,8 +32,10 @@ int sopi_gui() {
   S.cam = (Camera2D){{S.img_area_w/2.0, S.img_area_h/2.0}, {S.img_area_w/2.0, S.img_area_h/2.0}, 0, 1.0};
   state_dialog_init(&S);
 
-  while (!WindowShouldClose()) {
+  bool quit = false;
+  while (!WindowShouldClose() && !quit) {
     state_main_update(&S);
+    state_handle_keybindings(&S, &quit);
     state_handle_pan_and_zoom(&S);
     state_handle_resize(&S);
     state_handle_file_drops(&S);
