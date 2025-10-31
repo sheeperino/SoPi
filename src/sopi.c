@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
   MAX = *flag_max;
 
   const char *img_path = NULL;
-  if (!nob_file_exists(img_path = FILENAME)) {
+  if (FILENAME && !nob_file_exists(img_path = FILENAME)) {
     if (is_dir_sep(FILENAME[0]) || !nob_file_exists(img_path = nob_temp_sprintf(IMG_DIR "%s", FILENAME))) {
       fprintf(stderr, "ERROR: Input path is not valid\n");
       return 1;
