@@ -10,17 +10,6 @@
     }\
   } while (0)
 
-int _build_object_linux(const char *dest, const char *src, const char *impl) {
-  if (needs_rebuild1(dest, src)) {
-    cmd_append(&cmd, "cc", "-Wextra", "-Wall", "-std=c99");
-    cmd_append(&cmd, "-O3", "-march=native");
-    cmd_append(&cmd, "-x", "c", "-c", src, impl);
-    cmd_append(&cmd, "-o", dest);
-    return cmd_run(&cmd, .async = &procs);
-  }
-  return 1;
-}
-
 // credits: musializer
 int build_raylib_linux() {
   Cmd cmd = {0};

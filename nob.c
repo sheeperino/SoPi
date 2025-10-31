@@ -27,7 +27,7 @@ static const char *raylib_modules[] = {
 #include "./platform/build_win.c"
 
 int main(int argc, char **argv) {
-  NOB_GO_REBUILD_URSELF(argc, argv);
+  NOB_GO_REBUILD_URSELF_PLUS(argc, argv, "platform/build_linux.c", "platform/build_win.c");
   shift(argv, argc);
 
   // NOTE: use -- if you want to pass arguments to the program instead of to nob
@@ -95,7 +95,6 @@ int main(int argc, char **argv) {
     for (size_t i = 0; i < ARRAY_LEN(gui_sources); ++i) cmd_append(&cmd, gui_sources[i]);
     cmd_append(&cmd, "-L./build/raylib/windows", "-l:libraylib.a");
     cmd_append(&cmd, "-I" RAYLIB_SRC);
-    cmd_append(&cmd, "-o", BUILD_DIR "gui");
     cmd_append(&cmd, "-lwinmm", "-lgdi32", "-lole32");
     cmd_append(&cmd, "-static");
   }
