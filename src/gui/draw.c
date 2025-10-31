@@ -5,9 +5,9 @@
 #include "../../external/raygui.h"
 #undef RAYGUI_IMPLEMENTATION
 #define GUI_WINDOW_FILE_DIALOG_IMPLEMENTATION
-#include "gui_window_file_dialog.h"
+#include "../../external/gui_window_file_dialog.h"
 #include "draw.h"
-#include "style_amber.h"
+#include "../../external/style_amber.h"
 
 static Color bg_color;
 static Color text_color;

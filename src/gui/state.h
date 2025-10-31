@@ -4,7 +4,7 @@
 #include "raylib.h"
 #include "../sorting.h"
 
-#include "gui_window_file_dialog.h"
+#include "../../external/gui_window_file_dialog.h"
 
 typedef enum {
   STATE_NO_IMAGE,
