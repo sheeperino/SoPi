@@ -40,8 +40,8 @@ const char *basename(const char *s) {
 }
 
 void usage(FILE *stream) {
-  fprintf(stream, "Usage: [OPTIONS] [FILE]\n");
-  fprintf(stream, "Note - Interval ranges are as follows: \n[rgb, saturation, value (0-255)], [hue (0-360)]\n");
+  fprintf(stream, "Usage: sopi [OPTIONS] [FILE]\n");
+  fprintf(stream, "Note - Interval ranges are as follows: \n\t[rgb, saturation, value (0-255)], [hue (0-360)]\n");
   fprintf(stream, "Options:\n");
   flag_print_options(stream);
 }
@@ -60,7 +60,8 @@ int main(int argc, char **argv) {
   bool *help = flag_bool("help", false, "Print this message");
   bool *flag_gui = NULL;
   #ifndef CLI_ONLY
-    flag_gui = flag_bool("gui", false, "Launch the app in gui mode");
+    flag_gui = flag_bool("gui", false, "Launch the app in gui mode (if no arguments provided, runs in gui mode)");
+    if (argc == 1) *flag_gui = true;
   #endif
 
   if (!flag_parse(argc, argv)) {
