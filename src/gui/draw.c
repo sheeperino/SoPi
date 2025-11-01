@@ -163,10 +163,12 @@ void draw_sidebar(State *s, Rectangle r) {
   // -----------------------------------------------
 
   // info texts
+  GuiDrawText("Press F1 for help", (Rectangle){r.x + 10, GetScreenHeight() - 25, r.width, 25}, 0, text_color);
   if (s->app_state == STATE_MAIN) {
     GuiDrawText(nob_temp_sprintf("Preview size: %dx%d", (int)(s->orig_img.width*s->rfact), (int)(s->orig_img.height*s->rfact)),
+                (Rectangle){r.x + 10, GetScreenHeight() - 65, r.width, 25}, 0, text_color);
+    GuiDrawText(nob_temp_sprintf("Image size: %dx%d", s->orig_img.width, s->orig_img.height),
                 (Rectangle){r.x + 10, GetScreenHeight() - 45, r.width, 25}, 0, text_color);
-    GuiDrawText(nob_temp_sprintf("Image size: %dx%d", s->orig_img.width, s->orig_img.height), (Rectangle){r.x + 10, GetScreenHeight() - 25, r.width, 25}, 0, text_color);
   }
 
   // line separator
