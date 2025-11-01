@@ -424,12 +424,21 @@ static inline int FileCompare(const char *d1, const char *d2, const char *dir)
     return strcmp(d1, d2);
 }
 
+#if !defined(_WIN32)
+static int qstrcmp(const void *s1, const void *s2) {
+    return strcmp(*(const char **)s1, *(const char **)s2);
+}
+#endif
+
 // Read files in new path
 static void ReloadDirectoryFiles(GuiWindowFileDialogState *state)
 {
     UnloadDirectoryFiles(state->dirFiles);
 
     state->dirFiles = LoadDirectoryFilesEx(state->dirPathText, (state->filterExt[0] == '\0')? NULL : state->filterExt, false);
+    #if !defined(_WIN32)
+    qsort(state->dirFiles.paths, state->dirFiles.count, sizeof(char *), qstrcmp);
+    #endif
     state->itemFocused = 0;
 
     // Reset dirFilesIcon memory
