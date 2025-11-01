@@ -25,6 +25,8 @@ If you want to build the program without gui stuff:
 ```
 ./nob cli_only
 ```
+>   Note:
+> Compilation on Windows requires [MinGW](https://github.com/skeeto/w64devkit/releases).
 
 
 ## Credits
