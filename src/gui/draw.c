@@ -80,6 +80,8 @@ void draw_help_menu(State *s) {
     "Ctrl-O: Open image\n",
     "Ctrl-S: Save image\n",
     "Ctrl-Q: Quit\n",
+    "+/-/0: Zoom in/out/reset\n",
+    "Zoom and pan with mouse\n",
     "F1: Show this message\n",
     nob_temp_sprintf("%d FPS", GetFPS()),
   };
