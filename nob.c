@@ -12,6 +12,7 @@ Procs procs = {0};
 bool cli_only = false;
 bool lin = false;
 bool win = false;
+const char *dist_tag = NULL;
 
 static const char *cli_sources[] = {
   SRC_DIR "sopi.c", SRC_DIR "image.c", SRC_DIR "color.c", SRC_DIR "sorting.c",
@@ -28,6 +29,44 @@ static const char *raylib_modules[] = {
 #include "./platform/build_linux.c"
 #include "./platform/build_win.c"
 
+int clean_build() {
+  if (file_exists(BUILD_DIR)) {
+    cmd_append(&cmd, "rm", "-rf", BUILD_DIR);
+    if (!cmd_run(&cmd)) return 0;
+  }
+  return 1;
+}
+
+int is_dist_valid() {
+  cmd_append(&cmd, "gh", "release", "view", dist_tag); // verify provided tag is valid
+  if (!cmd_run(&cmd)) return 0;
+  return 1;
+}
+
+// NOTE: this doesnt directly publish the release, it assumes the release is a draft
+// (note to self) for publishing: gh release edit <tag> --draft=false
+int dist_assets(bool upload) {
+  if (!mkdir_if_not_exists("dist/")) return 0;
+  const char *linux_zip = temp_sprintf("dist/sopi-%s-linux.zip", dist_tag);
+
+  cmd_append(&cmd, "7z", "a", linux_zip, BUILD_DIR "sopi");
+  if (!cmd_run(&cmd)) return 0;
+  cmd_append(&cmd, "7z", "rn", linux_zip, BUILD_DIR, temp_sprintf("sopi-%s-linux/", dist_tag));
+  if (!cmd_run(&cmd)) return 0;
+
+  const char *win_zip = temp_sprintf("dist/sopi-%s-windows.zip", dist_tag);
+  cmd_append(&cmd, "7z", "a", win_zip, BUILD_DIR "sopi.exe");
+  if (!cmd_run(&cmd)) return 0;
+  cmd_append(&cmd, "7z", "rn", win_zip, BUILD_DIR, temp_sprintf("sopi-%s-windows/", dist_tag));
+  if (!cmd_run(&cmd)) return 0;
+
+  if (upload) {
+    cmd_append(&cmd, "gh", "release", "upload", dist_tag, "dist/*", "--clobber");
+    if (!cmd_run(&cmd)) return 0;
+  }
+  return 1;
+}
+
 int main(int argc, char **argv) {
   NOB_GO_REBUILD_URSELF_PLUS(argc, argv, "platform/build_linux.c", "platform/build_win.c");
   shift(argv, argc);
@@ -37,10 +76,7 @@ int main(int argc, char **argv) {
     const char *arg = shift(argv, argc);
     if (strcmp(arg, "--") == 0) break;
     if (strcmp(arg, "clean") == 0) {
-      if (file_exists(BUILD_DIR)) {
-        cmd_append(&cmd, "rm", "-rf", BUILD_DIR);
-        if (!cmd_run(&cmd)) return 1;
-      }
+      if (!clean_build()) return 1;
     } else if (strcmp(arg, "cli_only") == 0) {
       cli_only = true;
     } else if (strcmp(arg, "linux") == 0) {
@@ -48,6 +84,12 @@ int main(int argc, char **argv) {
     } else if (strcmp(arg, "windows") == 0) {
       win = true;
     } else if (strcmp(arg, "all") == 0) {
+      lin = true;
+      win = true;
+    } else if (strcmp(arg, "dist") == 0) {
+      dist_tag = shift(argv, argc);
+      if (!is_dist_valid()) return 1;
+      if (!clean_build()) return 1;
       lin = true;
       win = true;
     }
@@ -124,6 +166,11 @@ int main(int argc, char **argv) {
   }
 
   if (!procs_flush(&procs)) return 1;
+
+  // generate dist assets
+  if (dist_tag != NULL) {
+    if (!dist_assets(true)) return 1;
+  }
 
   const char *exe;
   if (lin && win) {
